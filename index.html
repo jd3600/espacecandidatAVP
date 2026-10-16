@@ -80,7 +80,7 @@
                 <div id="nav-step-1" class="step-link active p-3 rounded d-flex align-items-center gap-3" onclick="switchStep(1)">
                     <div class="step-circle bg-cyan-500 text-dark"><i class="fa-solid fa-file-upload"></i></div>
                     <div>
-                        <div class="fw-bold fs-6">1. Bienvenue & Ingestion</div>
+                        <div class="fw-bold fs-6">1. Ingestion Profil</div>
                         <small class="text-slate-400">Glisser-déposer CV</small>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
                     <div class="step-circle bg-slate-700 text-slate-300"><i class="fa-solid fa-sliders"></i></div>
                     <div>
                         <div class="fw-bold fs-6">2. Matching Explicable</div>
-                        <small class="text-slate-400">Score & Analyse OPT</small>
+                        <small class="text-slate-400">Croisement OPT</small>
                     </div>
                 </div>
                 <div class="step-line"></div>
@@ -100,8 +100,8 @@
                 <div id="nav-step-3" class="step-link p-3 rounded d-flex align-items-center gap-3" onclick="switchStep(3)">
                     <div class="step-circle bg-slate-700 text-slate-300"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
                     <div>
-                        <div class="fw-bold fs-6">3. Assets Candidature</div>
-                        <small class="text-slate-400">Réponses Copilote IA</small>
+                        <div class="fw-bold fs-6">3. Assets IA</div>
+                        <small class="text-slate-400">Documents & Bilan</small>
                     </div>
                 </div>
                 <div class="step-line"></div>
@@ -110,8 +110,8 @@
                 <div id="nav-step-4" class="step-link p-3 rounded d-flex align-items-center gap-3" onclick="switchStep(4)">
                     <div class="step-circle bg-slate-700 text-slate-300"><i class="fa-solid fa-cloud-arrow-up"></i></div>
                     <div>
-                        <div class="fw-bold fs-6">4. Soumission RH</div>
-                        <small class="text-slate-400">Stockage GCS & Firestore</small>
+                        <div class="fw-bold fs-6">4. Soumission Cloud</div>
+                        <small class="text-slate-400">Firestore & GCS</small>
                     </div>
                 </div>
             </div>
@@ -123,8 +123,8 @@
             <!-- ================= ÉTAPE 1 : BIENVENUE & INGESTION ================= -->
             <div id="step-content-1" class="step-content">
                 <div class="mb-4">
-                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-door-open me-2"></i>Bienvenue sur Copilote RH</h2>
-                    <p class="text-slate-400">Déposez le CV ou le profil informel du candidat pour lancer l'analyse automatisée.</p>
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-door-open me-2"></i>Étape 1 : Ingestion du Profil Candidat</h2>
+                    <p class="text-slate-400">Glissez-déposez le CV ou saisissez le profil informel pour extraire les compétences normalisées.</p>
                 </div>
 
                 <!-- Zone de Glisser-Déposer -->
@@ -143,7 +143,7 @@
 
                 <div class="d-flex justify-content-end">
                     <button class="btn btn-primary bg-cyan-500 border-0 px-4 py-2 text-dark fw-bold" onclick="executerIngestion()">
-                        Analyser le Profil <i class="fa-solid fa-arrow-right ms-2"></i>
+                        Analyser et Structurer <i class="fa-solid fa-arrow-right ms-2"></i>
                     </button>
                 </div>
             </div>
@@ -151,20 +151,28 @@
             <!-- ================= ÉTAPE 2 : MATCHING EXPLICABLE ================= -->
             <div id="step-content-2" class="step-content d-none">
                 <div class="mb-4">
-                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-chart-pie me-2"></i>Fonction 2 : Matching Explicable</h2>
-                    <p class="text-slate-400">Analyse de la correspondance entre le profil candidat et l'AVP cible de l'OPT-NC.</p>
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-chart-pie me-2"></i>Étape 2 : Matching Explicable</h2>
+                    <p class="text-slate-400">Le profil structuré de l'étape précédente est injecté automatiquement ci-dessous.</p>
+                </div>
+
+                <!-- Encadré de prévisualisation du profil de l'étape 1 -->
+                <div class="ai-card p-4 mb-4 border border-cyan-500/30">
+                    <h6 class="text-cyan-400 fw-bold mb-2"><i class="fa-solid fa-id-badge me-2"></i>Profil Candidat Structuré (Transmis depuis l'Étape 1)</h6>
+                    <div id="profil-preview-box" class="p-3 bg-slate-900 rounded text-slate-300 fs-7" style="max-height: 180px; overflow-y: auto;">
+                        <em class="text-muted">Aucun profil ingéré. Veuillez repasser par l'étape 1.</em>
+                    </div>
                 </div>
 
                 <div class="ai-card p-4 mb-4">
                     <div class="mb-3">
-                        <label class="form-label text-slate-300">Intitulé / Code de l'AVP Cible :</label>
+                        <label class="form-label text-slate-300">Intitulé / Code de l'AVP Cible OPT-NC :</label>
                         <input type="text" id="avp_cible_input" class="form-control bg-slate-900 text-white border-slate-700" value="Technicien Réseau & Télécoms">
                     </div>
                     <button class="btn btn-outline-cyan text-cyan-400 border-cyan-400 mb-3" onclick="executerMatching()">
-                        <i class="fa-solid fa-calculator me-2"></i>Calculer le Score de Matching
+                        <i class="fa-solid fa-calculator me-2"></i>Calculer le Score de Matching Explicable
                     </button>
 
-                    <div id="matching-result-box" class="p-3 bg-slate-900 rounded border border-slate-700 text-slate-300 d-none">
+                    <div id="matching-result-box" class="p-3 bg-slate-900 rounded border border-slate-700 text-slate-300 d-none mt-3">
                         <!-- Résultat injecté dynamiquement -->
                     </div>
                 </div>
@@ -180,8 +188,8 @@
             <!-- ================= ÉTAPE 3 : ASSETS (MESSAGE COPILOTE IA) ================= -->
             <div id="step-content-3" class="step-content d-none">
                 <div class="mb-4">
-                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Fonction 3 : Réponses du Copilote IA</h2>
-                    <p class="text-slate-400">Les 4 documents et bilans générés spécifiquement pour le candidat.</p>
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Étape 3 : Réponses du Copilote IA</h2>
+                    <p class="text-slate-400">Génération automatique des 4 documents et bilans adaptés aux exigences de l'OPT-NC.</p>
                 </div>
 
                 <div class="d-flex justify-content-center mb-4">
@@ -190,7 +198,7 @@
                     </button>
                 </div>
 
-                <!-- Grille de Cadres de Réponses Structurés (Fin du mode ASCII) -->
+                <!-- Grille de Cadres de Réponses Structurés -->
                 <div class="row g-4" id="assets-cards-container">
                     <!-- Cadre 1 : CV Structuré -->
                     <div class="col-md-6">
@@ -256,8 +264,8 @@
             <!-- ================= ÉTAPE 4 : SOUMISSION RH & CLOUD ================= -->
             <div id="step-content-4" class="step-content d-none">
                 <div class="mb-4">
-                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Fonction 4 : Soumission Candidat</h2>
-                    <p class="text-slate-400">Validation et archivage automatique dans Firestore et Google Cloud Storage.</p>
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Étape 4 : Soumission & Archivage Cloud</h2>
+                    <p class="text-slate-400">Validation et enregistrement sécurisé dans Firestore et Google Cloud Storage.</p>
                 </div>
 
                 <div class="ai-card p-4 mb-4 border border-cyan-500/30">
@@ -273,7 +281,7 @@
 
                     <div class="p-3 bg-slate-900/80 rounded border border-slate-800 mb-3">
                         <small class="text-cyan-400 d-block mb-1"><i class="fa-solid fa-shield-halved me-1"></i> Mode Stockage GCP Activé</small>
-                        <small class="text-slate-400">Les métadonnées seront inscrites dans Firestore (`collection: candidatures`) et le dossier JSON complet sera archivé sur le bucket `gs://copilote-rh-candidatures-opt`.</small>
+                        <small class="text-slate-400">Les métadonnées seront indexées dans Firestore (`collection: candidatures`) et le dossier JSON complet sera archivé sur le bucket GCS.</small>
                     </div>
 
                     <button class="btn btn-success bg-emerald-600 border-0 w-100 py-3 fw-bold fs-6" onclick="soumettreToutAuCloud()">
@@ -340,7 +348,7 @@
         reader.readAsText(file);
     }
 
-    // API Fonction 1 : Ingestion
+    // API Fonction 1 : Ingestion -> Injection auto dans l'étape 2
     async function executerIngestion() {
         const texte = document.getElementById('profil_brut').value;
         if (!texte) { alert("Veuillez saisir ou déposer un profil."); return; }
@@ -353,6 +361,13 @@
             });
             const data = await res.json();
             profilStructureGlobal = data.resultat;
+
+            // Injection automatique dans l'aperçu de l'étape 2
+            document.getElementById('profil-preview-box').innerHTML = `
+                <pre class="text-cyan-300 mb-0" style="white-space: pre-wrap; font-family: inherit;">${JSON.stringify(profilStructureGlobal, null, 2)}</pre>
+            `;
+
+            // Bascule automatique vers l'étape 2
             switchStep(2);
         } catch (e) {
             alert("Erreur lors de l'ingestion : " + e.message);
@@ -429,7 +444,7 @@
                 <h5 class="fw-bold"><i class="fa-solid fa-circle-check me-2"></i>Dossier Enregistré avec Succès !</h5>
                 <p class="mb-1">E-mail Candidat : <strong>${email}</strong></p>
                 <p class="mb-1">ID Candidature : <code>${data.stockage.candidature_id}</code></p>
-                <small class="text-slate-400">Le dossier a été archivé sur GCS et indexé dans Firestore.</small>
+                <small class="text-slate-400">Le dossier a été archivé sur le bucket GCS et indexé dans Firestore.</small>
             `;
         } catch (e) {
             alert("Erreur lors de l'enregistrement Cloud : " + e.message);

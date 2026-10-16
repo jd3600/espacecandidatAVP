@@ -3,292 +3,438 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Copilote RH — Espace Candidat OPT-NC</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Copilote RH - HackAVP OPT-NC</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS pour un design ultra-fluide -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 40%),
-                        radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.15) 0%, transparent 40%),
-                        #0b132b;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        .sidebar {
+            background: #1e293b;
             min-height: 100vh;
-            color: #f1f5f9;
+            border-right: 1px solid #334155;
         }
-
-        /* Glassmorphism Classes */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        .step-link {
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
-
-        .glass-card-hover {
+        .step-link.active {
+            background: rgba(6, 182, 212, 0.15);
+            border-left: 4px solid #06b6d4;
+            color: #38bdf8;
+        }
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .step-line {
+            width: 2px;
+            height: 24px;
+            background-color: #334155;
+            margin-left: 17px;
+        }
+        .drop-zone {
+            border: 2px dashed #06b6d4;
+            background: rgba(15, 23, 42, 0.6);
             transition: all 0.3s ease;
         }
-
-        .glass-card-hover:hover {
-            border-color: rgba(56, 189, 248, 0.4);
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .glass-input {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #f8fafc;
-        }
-
-        .glass-input:focus {
+        .drop-zone:hover, .drop-zone.dragover {
+            background: rgba(6, 182, 212, 0.1);
             border-color: #38bdf8;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
-            outline: none;
         }
-
-        /* Neon Blue Line Accent */
-        .blue-glow-line {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #38bdf8, #2563eb, transparent);
-        }
-
-        .blue-border-glow {
-            border-left: 3px solid #38bdf8;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(11, 19, 43, 0.6);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(56, 189, 248, 0.3);
-            border-radius: 4px;
+        .ai-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
         }
     </style>
 </head>
-<body class="p-4 md:p-8 flex flex-col justify-between">
+<body>
 
-    <!-- HEADER -->
-    <header class="max-w-7xl mx-auto w-full mb-8">
-        <div class="glass-card rounded-2xl p-6 flex flex-col md:flex-row justify-between items-center gap-4 relative overflow-hidden">
-            <div class="absolute top-0 left-0 right-0 blue-glow-line"></div>
-            
-            <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+<div class="container-fluid">
+    <div class="row">
+        <!-- SIDEBAR : FIL CONDUCTEUR VERTICAL -->
+        <div class="col-md-3 col-lg-2 p-0 sidebar">
+            <div class="p-4 border-bottom border-secondary">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-robot text-cyan-400 fs-4"></i>
+                    <h1 class="h5 mb-0 fw-bold text-white">Copilote RH</h1>
                 </div>
-                <div>
-                    <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">Copilote RH</h1>
-                    <p class="text-xs text-slate-400">Espace Candidat — OPT-NC (Apigee Live API)</p>
-                </div>
+                <small class="text-muted">OPT-NC • HackAVP</small>
             </div>
 
-            <div class="flex items-center space-x-3">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-                    <span class="w-2 h-2 rounded-full bg-cyan-400 mr-2 animate-pulse"></span> Cloud Run Connected
-                </span>
+            <div class="p-3">
+                <!-- Étape 1 -->
+                <div id="nav-step-1" class="step-link active p-3 rounded d-flex align-items-center gap-3" onclick="switchStep(1)">
+                    <div class="step-circle bg-cyan-500 text-dark"><i class="fa-solid fa-file-upload"></i></div>
+                    <div>
+                        <div class="fw-bold fs-6">1. Bienvenue & Ingestion</div>
+                        <small class="text-slate-400">Glisser-déposer CV</small>
+                    </div>
+                </div>
+                <div class="step-line"></div>
+
+                <!-- Étape 2 -->
+                <div id="nav-step-2" class="step-link p-3 rounded d-flex align-items-center gap-3" onclick="switchStep(2)">
+                    <div class="step-circle bg-slate-700 text-slate-300"><i class="fa-solid fa-sliders"></i></div>
+                    <div>
+                        <div class="fw-bold fs-6">2. Matching Explicable</div>
+                        <small class="text-slate-400">Score & Analyse OPT</small>
+                    </div>
+                </div>
+                <div class="step-line"></div>
+
+                <!-- Étape 3 -->
+                <div id="nav-step-3" class="step-link p-3 rounded d-flex align-items-center gap-3" onclick="switchStep(3)">
+                    <div class="step-circle bg-slate-700 text-slate-300"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <div>
+                        <div class="fw-bold fs-6">3. Assets Candidature</div>
+                        <small class="text-slate-400">Réponses Copilote IA</small>
+                    </div>
+                </div>
+                <div class="step-line"></div>
+
+                <!-- Étape 4 -->
+                <div id="nav-step-4" class="step-link p-3 rounded d-flex align-items-center gap-3" onclick="switchStep(4)">
+                    <div class="step-circle bg-slate-700 text-slate-300"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <div>
+                        <div class="fw-bold fs-6">4. Soumission RH</div>
+                        <small class="text-slate-400">Stockage GCS & Firestore</small>
+                    </div>
+                </div>
             </div>
         </div>
-    </header>
 
-    <!-- MAIN CONTENT -->
-    <main class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
-        
-        <!-- LEFT PANEL: CONTROLS & FORM -->
-        <div class="lg:col-span-5 space-y-6">
-            
-            <!-- STEP 1: PARCOURS / INGESTION -->
-            <div class="glass-card glass-card-hover rounded-2xl p-6 relative">
-                <div class="blue-border-glow pl-4 mb-4">
-                    <h2 class="text-lg font-semibold text-white">① Ingestion du Profil</h2>
-                    <p class="text-xs text-slate-400">Saisissez votre CV ou expérience informelle</p>
+        <!-- CONTENU PRINCIPAL PAR ÉTAPES -->
+        <div class="col-md-9 col-lg-10 p-4 p-md-5">
+
+            <!-- ================= ÉTAPE 1 : BIENVENUE & INGESTION ================= -->
+            <div id="step-content-1" class="step-content">
+                <div class="mb-4">
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-door-open me-2"></i>Bienvenue sur Copilote RH</h2>
+                    <p class="text-slate-400">Déposez le CV ou le profil informel du candidat pour lancer l'analyse automatisée.</p>
                 </div>
 
-                <textarea id="description_brute" rows="5" class="w-full glass-input rounded-xl p-4 text-sm transition-all resize-none mb-4" placeholder="Ex: J'ai travaille 3 ans comme technicien reseau et support client a Noumea. Je maîtrise l'installation de routeurs et l'accueil public..."></textarea>
-                
-                <button onclick="analyserProfil()" id="btn-ingestion" class="w-full py-3 px-4 rounded-xl font-medium text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center space-x-2">
-                    <span>Analyser & Structurer le Profil</span>
-                </button>
+                <!-- Zone de Glisser-Déposer -->
+                <div class="drop-zone p-5 rounded-3 text-center mb-4" id="drop-area">
+                    <i class="fa-solid fa-cloud-arrow-up text-cyan-400 display-4 mb-3"></i>
+                    <h4 class="fw-semibold">Glissez-déposez votre document ici (CV, Lettre, TXT)</h4>
+                    <p class="text-slate-400 fs-7">ou cliquez pour parcourir vos fichiers</p>
+                    <input type="file" id="file-input" class="d-none" accept=".txt,.pdf,.docx">
+                </div>
+
+                <!-- Zone Saisie Directe Alternative -->
+                <div class="ai-card p-4 mb-4">
+                    <label class="form-label text-slate-300 fw-medium">Ou saisissez / collez le profil texte directement :</label>
+                    <textarea id="profil_brut" class="form-control bg-slate-900 text-white border-slate-700" rows="5" placeholder="Ex: Technicien réseau certifié Cisco avec 5 ans d'expérience en maintenance télécom..."></textarea>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary bg-cyan-500 border-0 px-4 py-2 text-dark fw-bold" onclick="executerIngestion()">
+                        Analyser le Profil <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
             </div>
 
-            <!-- STEP 2: OFFRES & MATCHING -->
-            <div class="glass-card glass-card-hover rounded-2xl p-6 relative">
-                <div class="blue-border-glow pl-4 mb-4">
-                    <h2 class="text-lg font-semibold text-white">② Sélection & Matching</h2>
-                    <p class="text-xs text-slate-400">Interrogation des métiers via l'API Apigee</p>
+            <!-- ================= ÉTAPE 2 : MATCHING EXPLICABLE ================= -->
+            <div id="step-content-2" class="step-content d-none">
+                <div class="mb-4">
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-chart-pie me-2"></i>Fonction 2 : Matching Explicable</h2>
+                    <p class="text-slate-400">Analyse de la correspondance entre le profil candidat et l'AVP cible de l'OPT-NC.</p>
                 </div>
 
-                <div class="space-y-4">
-                    <button onclick="chargerMetiersApigee()" class="w-full py-2.5 px-4 rounded-xl text-xs font-medium glass-input hover:border-cyan-400 text-cyan-300 transition-all flex items-center justify-center space-x-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                        <span>Charger Métiers / AVP (Apigee)</span>
+                <div class="ai-card p-4 mb-4">
+                    <div class="mb-3">
+                        <label class="form-label text-slate-300">Intitulé / Code de l'AVP Cible :</label>
+                        <input type="text" id="avp_cible_input" class="form-control bg-slate-900 text-white border-slate-700" value="Technicien Réseau & Télécoms">
+                    </div>
+                    <button class="btn btn-outline-cyan text-cyan-400 border-cyan-400 mb-3" onclick="executerMatching()">
+                        <i class="fa-solid fa-calculator me-2"></i>Calculer le Score de Matching
                     </button>
 
-                    <input type="text" id="id_avp_cible" class="w-full glass-input rounded-xl p-3 text-sm" value="Technicien Réseau & Télécoms" placeholder="Intitulé du poste ou Code AVP">
-
-                    <div class="grid grid-cols-2 gap-3 pt-2">
-                        <button onclick="lancerMatching()" id="btn-matching" class="py-3 px-3 rounded-xl font-medium text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-all">
-                            ⚡ Matching Explicable
-                        </button>
-                        <button onclick="genererAssets()" id="btn-assets" class="py-3 px-3 rounded-xl font-medium text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-all">
-                            ✨ Générer 4 Assets
-                        </button>
+                    <div id="matching-result-box" class="p-3 bg-slate-900 rounded border border-slate-700 text-slate-300 d-none">
+                        <!-- Résultat injecté dynamiquement -->
                     </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-outline-secondary" onclick="switchStep(1)"><i class="fa-solid fa-arrow-left me-2"></i>Retour</button>
+                    <button class="btn btn-primary bg-cyan-500 border-0 px-4 py-2 text-dark fw-bold" onclick="switchStep(3)">
+                        Générer les Assets <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ================= ÉTAPE 3 : ASSETS (MESSAGE COPILOTE IA) ================= -->
+            <div id="step-content-3" class="step-content d-none">
+                <div class="mb-4">
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Fonction 3 : Réponses du Copilote IA</h2>
+                    <p class="text-slate-400">Les 4 documents et bilans générés spécifiquement pour le candidat.</p>
+                </div>
+
+                <div class="d-flex justify-content-center mb-4">
+                    <button class="btn btn-cyan bg-gradient-to-r from-cyan-500 to-blue-600 text-white fw-bold px-4 py-2 shadow" onclick="genererAssets()">
+                        <i class="fa-solid fa-gears me-2"></i>Lancer la Génération des 4 Assets
+                    </button>
+                </div>
+
+                <!-- Grille de Cadres de Réponses Structurés (Fin du mode ASCII) -->
+                <div class="row g-4" id="assets-cards-container">
+                    <!-- Cadre 1 : CV Structuré -->
+                    <div class="col-md-6">
+                        <div class="ai-card p-4 h-100 border-start border-4 border-cyan-400">
+                            <div class="d-flex align-items-center gap-2 mb-3 text-cyan-400">
+                                <i class="fa-solid fa-id-card fs-4"></i>
+                                <h5 class="fw-bold mb-0">1. CV Structuré OPT</h5>
+                            </div>
+                            <div id="asset-cv" class="text-slate-300 fs-7 space-y-2">
+                                <em class="text-muted">En attente de génération...</em>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cadre 2 : Lettre de Motivation -->
+                    <div class="col-md-6">
+                        <div class="ai-card p-4 h-100 border-start border-4 border-blue-500">
+                            <div class="d-flex align-items-center gap-2 mb-3 text-blue-400">
+                                <i class="fa-solid fa-envelope-open-text fs-4"></i>
+                                <h5 class="fw-bold mb-0">2. Lettre de Motivation</h5>
+                            </div>
+                            <div id="asset-lettre" class="text-slate-300 fs-7 space-y-2">
+                                <em class="text-muted">En attente de génération...</em>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cadre 3 : Bilan de Compétences -->
+                    <div class="col-md-6">
+                        <div class="ai-card p-4 h-100 border-start border-4 border-emerald-500">
+                            <div class="d-flex align-items-center gap-2 mb-3 text-emerald-400">
+                                <i class="fa-solid fa-chart-line fs-4"></i>
+                                <h5 class="fw-bold mb-0">3. Bilan de Compétences</h5>
+                            </div>
+                            <div id="asset-bilan" class="text-slate-300 fs-7 space-y-2">
+                                <em class="text-muted">En attente de génération...</em>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cadre 4 : Fiche Entretien RH -->
+                    <div class="col-md-6">
+                        <div class="ai-card p-4 h-100 border-start border-4 border-purple-500">
+                            <div class="d-flex align-items-center gap-2 mb-3 text-purple-400">
+                                <i class="fa-solid fa-comments fs-4"></i>
+                                <h5 class="fw-bold mb-0">4. Guide d'Entretien RH</h5>
+                            </div>
+                            <div id="asset-oral" class="text-slate-300 fs-7 space-y-2">
+                                <em class="text-muted">En attente de génération...</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button class="btn btn-outline-secondary" onclick="switchStep(2)"><i class="fa-solid fa-arrow-left me-2"></i>Retour</button>
+                    <button class="btn btn-primary bg-cyan-500 border-0 px-4 py-2 text-dark fw-bold" onclick="switchStep(4)">
+                        Finaliser & Soumettre <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ================= ÉTAPE 4 : SOUMISSION RH & CLOUD ================= -->
+            <div id="step-content-4" class="step-content d-none">
+                <div class="mb-4">
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Fonction 4 : Soumission Candidat</h2>
+                    <p class="text-slate-400">Validation et archivage automatique dans Firestore et Google Cloud Storage.</p>
+                </div>
+
+                <div class="ai-card p-4 mb-4 border border-cyan-500/30">
+                    <div class="mb-3">
+                        <label class="form-label text-slate-300 fw-medium">Adresse E-mail du Candidat *</label>
+                        <input type="email" id="candidat_email" class="form-control bg-slate-900 text-white border-slate-700" placeholder="exemple@domaine.nc" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-slate-300 fw-medium">Poste Cible Confirmé</label>
+                        <input type="text" id="final_avp_cible" class="form-control bg-slate-900 text-white border-slate-700" value="Technicien Réseau & Télécoms">
+                    </div>
+
+                    <div class="p-3 bg-slate-900/80 rounded border border-slate-800 mb-3">
+                        <small class="text-cyan-400 d-block mb-1"><i class="fa-solid fa-shield-halved me-1"></i> Mode Stockage GCP Activé</small>
+                        <small class="text-slate-400">Les métadonnées seront inscrites dans Firestore (`collection: candidatures`) et le dossier JSON complet sera archivé sur le bucket `gs://copilote-rh-candidatures-opt`.</small>
+                    </div>
+
+                    <button class="btn btn-success bg-emerald-600 border-0 w-100 py-3 fw-bold fs-6" onclick="soumettreToutAuCloud()">
+                        <i class="fa-solid fa-paper-plane me-2"></i>Envoyer le Dossier Candidat
+                    </button>
+                </div>
+
+                <div id="final-status-box" class="d-none p-4 rounded-3 bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
+                    <!-- Confirmations Firestore / GCS -->
                 </div>
             </div>
 
         </div>
+    </div>
+</div>
 
-        <!-- RIGHT PANEL: RESULTS DISPLAY -->
-        <div class="lg:col-span-7">
-            <div class="glass-card rounded-2xl p-6 h-full flex flex-col justify-between relative overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 blue-glow-line"></div>
-                
-                <div>
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-lg font-semibold text-white flex items-center space-x-2">
-                            <span>Résultats & Restitutions</span>
-                        </h2>
-                        <span id="status-tag" class="text-xs text-slate-400 italic">En attente d'action...</span>
-                    </div>
+<!-- SCRIPTS JS -->
+<script>
+    const API_BASE = "https://copilote-rh-backend-497748830926.europe-west9.run.app";
+    let currentStep = 1;
+    let profilStructureGlobal = null;
+    let assetsGlobal = null;
 
-                    <!-- LOADER -->
-                    <div id="loader" class="hidden flex-col items-center justify-center py-12">
-                        <div class="w-10 h-10 border-4 border-cyan-500/20 border-t-cyan-400 rounded-full animate-spin mb-3"></div>
-                        <p class="text-xs text-cyan-400 font-medium">Traitement par l'IA Gemini & Apigee...</p>
-                    </div>
-
-                    <!-- JSON OUTPUT / RESTITUTION -->
-                    <div id="output-container" class="relative">
-                        <pre id="output" class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-4 text-xs font-mono text-cyan-300 overflow-x-auto max-h-[500px] leading-relaxed">
-// Les résultats de l'API s'afficheront ici au format structuré...
-{
-  "status": "ready",
-  "backend": "https://copilote-rh-backend-497748830926.europe-west9.run.app"
-}
-                        </pre>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-800/60 mt-6 flex justify-between items-center text-xs text-slate-500">
-                    <span>Projet HackAVP OPT-NC</span>
-                    <span>Conforme RGPD & Explicabilité RH</span>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="max-w-7xl mx-auto w-full text-center text-xs text-slate-500">
-        <p>© 2026 Copilote RH — Propulsé par Google Cloud Run & Apigee OPT-NC</p>
-    </footer>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        const API_BASE = "https://copilote-rh-backend-497748830926.europe-west9.run.app";
-        let profilStructuring = "";
-
-        function showLoading(active) {
-            const loader = document.getElementById('loader');
-            const output = document.getElementById('output');
-            if (active) {
-                loader.classList.remove('hidden');
-                loader.classList.add('flex');
-                output.classList.add('opacity-30');
-            } else {
-                loader.classList.add('hidden');
-                loader.classList.remove('flex');
-                output.classList.remove('opacity-30');
-            }
+    // Navigation entre étapes
+    function switchStep(step) {
+        currentStep = step;
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById(`step-content-${i}`).classList.add('d-none');
+            const nav = document.getElementById(`nav-step-${i}`);
+            nav.classList.remove('active');
+            nav.querySelector('.step-circle').classList.replace('bg-cyan-500', 'bg-slate-700');
+            nav.querySelector('.step-circle').classList.replace('text-dark', 'text-slate-300');
         }
 
-        function updateOutput(data, tag) {
-            document.getElementById('output').textContent = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
-            document.getElementById('status-tag').textContent = tag;
-        }
+        document.getElementById(`step-content-${step}`).classList.remove('d-none');
+        const activeNav = document.getElementById(`nav-step-${step}`);
+        activeNav.classList.add('active');
+        activeNav.querySelector('.step-circle').classList.replace('bg-slate-700', 'bg-cyan-500');
+        activeNav.querySelector('.step-circle').classList.replace('text-slate-300', 'text-dark');
+    }
 
-        async function analyserProfil() {
-            const desc = document.getElementById('description_brute').value;
-            if (!desc) return alert("Veuillez saisir votre parcours.");
+    // Gestion du Drag & Drop Étape 1
+    const dropArea = document.getElementById('drop-area');
+    const fileInput = document.getElementById('file-input');
 
-            showLoading(true);
-            try {
-                const res = await fetch(`${API_BASE}/api/candidat/ingestion`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ description_brute: desc })
-                });
-                const data = await res.json();
-                profilStructuring = data.resultat;
-                updateOutput(data, "Fonction ① - Profil Structuré");
-            } catch (err) {
-                updateOutput({ error: err.message }, "Erreur Ingestion");
-            } finally {
-                showLoading(false);
-            }
+    dropArea.addEventListener('click', () => fileInput.click());
+    dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.classList.add('dragover'); });
+    dropArea.addEventListener('dragleave', () => dropArea.classList.remove('dragover'));
+    dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+        if (e.dataTransfer.files.length) {
+            handleFile(e.dataTransfer.files[0]);
         }
+    });
+    fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
 
-        async function chargerMetiersApigee() {
-            showLoading(true);
-            try {
-                const res = await fetch(`${API_BASE}/api/apigee/metiers`);
-                const data = await res.json();
-                updateOutput(data, "Référentiel Métiers (Apigee)");
-            } catch (err) {
-                updateOutput({ error: err.message }, "Erreur Apigee");
-            } finally {
-                showLoading(false);
-            }
-        }
+    function handleFile(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('profil_brut').value = e.target.result;
+            alert(`Fichier "${file.name}" chargé avec succès !`);
+        };
+        reader.readAsText(file);
+    }
 
-        async function lancerMatching() {
-            const avp = document.getElementById('id_avp_cible').value;
-            showLoading(true);
-            try {
-                const res = await fetch(`${API_BASE}/api/candidat/matching`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        profil_structurer: profilStructuring || "Profil Standard Candidat",
-                        id_avp_cible: avp
-                    })
-                });
-                const data = await res.json();
-                updateOutput(data, "Fonction ② - Matching Explicable");
-            } catch (err) {
-                updateOutput({ error: err.message }, "Erreur Matching");
-            } finally {
-                showLoading(false);
-            }
-        }
+    // API Fonction 1 : Ingestion
+    async function executerIngestion() {
+        const texte = document.getElementById('profil_brut').value;
+        if (!texte) { alert("Veuillez saisir ou déposer un profil."); return; }
 
-        async function genererAssets() {
-            const avp = document.getElementById('id_avp_cible').value;
-            showLoading(true);
-            try {
-                const res = await fetch(`${API_BASE}/api/candidat/assets`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        profil_structurer: profilStructuring || "Profil Standard Candidat",
-                        id_avp_cible: avp
-                    })
-                });
-                const data = await res.json();
-                updateOutput(data, "Fonctions ③ & ④ - 4 Assets Générés");
-            } catch (err) {
-                updateOutput({ error: err.message }, "Erreur Assets");
-            } finally {
-                showLoading(false);
-            }
+        try {
+            const res = await fetch(`${API_BASE}/api/candidat/ingestion`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description_brute: texte })
+            });
+            const data = await res.json();
+            profilStructureGlobal = data.resultat;
+            switchStep(2);
+        } catch (e) {
+            alert("Erreur lors de l'ingestion : " + e.message);
         }
-    </script>
+    }
+
+    // API Fonction 2 : Matching
+    async function executerMatching() {
+        const avp = document.getElementById('avp_cible_input').value;
+        try {
+            const res = await fetch(`${API_BASE}/api/candidat/matching`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    profil_structurer: JSON.stringify(profilStructureGlobal || "Profil Standard"),
+                    id_avp_cible: avp
+                })
+            });
+            const data = await res.json();
+            const box = document.getElementById('matching-result-box');
+            box.classList.remove('d-none');
+            box.innerHTML = `<pre class="text-cyan-400 mb-0">${JSON.stringify(data.resultat, null, 2)}</pre>`;
+        } catch (e) {
+            alert("Erreur Matching : " + e.message);
+        }
+    }
+
+    // API Fonction 3 : Assets
+    async function genererAssets() {
+        const avp = document.getElementById('avp_cible_input').value;
+        try {
+            const res = await fetch(`${API_BASE}/api/candidat/assets`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    profil_structurer: JSON.stringify(profilStructureGlobal || "Profil Standard"),
+                    id_avp_cible: avp
+                })
+            });
+            const data = await res.json();
+            assetsGlobal = data.resultat;
+
+            // Affichage dans les cadres structurés
+            document.getElementById('asset-cv').innerHTML = `<p>${assetsGlobal.cv_structurering || JSON.stringify(assetsGlobal)}</p>`;
+            document.getElementById('asset-lettre').innerHTML = `<p>${assetsGlobal.lettre_motivation || "Lettre adaptée aux exigences de l'OPT-NC."}</p>`;
+            document.getElementById('asset-bilan').innerHTML = `<p>${assetsGlobal.bilan_competences || "Évaluation complète réalisée par l'IA."}</p>`;
+            document.getElementById('asset-oral').innerHTML = `<p>${assetsGlobal.fiche_entretien || "Questions préparatoires d'entretien RH."}</p>`;
+        } catch (e) {
+            alert("Erreur Génération Assets : " + e.message);
+        }
+    }
+
+    // API Fonction 4 : Soumission Cloud (Firestore + GCS)
+    async function soumettreToutAuCloud() {
+        const email = document.getElementById('candidat_email').value;
+        const avp = document.getElementById('final_avp_cible').value;
+
+        if (!email) { alert("Veuillez entrer une adresse e-mail valide."); return; }
+
+        try {
+            const res = await fetch(`${API_BASE}/api/candidat/postuler`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    profil_structurer: profilStructureGlobal || "Profil Standard",
+                    id_avp_cible: avp
+                })
+            });
+            const data = await res.json();
+            const box = document.getElementById('final-status-box');
+            box.classList.remove('d-none');
+            box.innerHTML = `
+                <h5 class="fw-bold"><i class="fa-solid fa-circle-check me-2"></i>Dossier Enregistré avec Succès !</h5>
+                <p class="mb-1">E-mail Candidat : <strong>${email}</strong></p>
+                <p class="mb-1">ID Candidature : <code>${data.stockage.candidature_id}</code></p>
+                <small class="text-slate-400">Le dossier a été archivé sur GCS et indexé dans Firestore.</small>
+            `;
+        } catch (e) {
+            alert("Erreur lors de l'enregistrement Cloud : " + e.message);
+        }
+    }
+</script>
 </body>
 </html>

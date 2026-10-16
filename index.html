@@ -59,12 +59,20 @@
             border: 1px solid #334155;
             border-radius: 12px;
         }
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(0.97); }
+        .chat-bubble-ai {
+            background: rgba(6, 182, 212, 0.12);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 16px 16px 16px 4px;
         }
-        .status-pulse {
-            animation: pulse-slow 2s infinite;
+        .chat-bubble-hr {
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px 16px 4px 16px;
+        }
+        .asset-content {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #cbd5e1;
         }
     </style>
 </head>
@@ -83,27 +91,24 @@
             </div>
 
             <div class="p-3">
-                <!-- Étape 1 -->
                 <div id="nav-step-1" class="step-link active p-3 rounded d-flex align-items-center gap-3" onclick="switchStep(1)">
                     <div class="step-circle bg-cyan-500 text-dark"><i class="fa-solid fa-file-upload"></i></div>
                     <div>
                         <div class="fw-bold fs-6">1. Ingestion Profil</div>
-                        <small class="text-slate-400">Glisser-déposer CV</small>
+                        <small class="text-slate-400">Glisser-déposer CVs</small>
                     </div>
                 </div>
                 <div class="step-line"></div>
 
-                <!-- Étape 2 -->
                 <div id="nav-step-2" class="step-link p-3 rounded d-flex align-items-center gap-3" onclick="switchStep(2)">
-                    <div class="step-circle bg-slate-700 text-slate-300"><i class="fa-solid fa-sliders"></i></div>
+                    <div class="step-circle bg-slate-700 text-slate-300"><i class="fa-solid fa-comments"></i></div>
                     <div>
-                        <div class="fw-bold fs-6">2. Matching Explicable</div>
-                        <small class="text-slate-400">Croisement OPT</small>
+                        <div class="fw-bold fs-6">2. Matching Dialogué</div>
+                        <small class="text-slate-400">Échange IA & Recruteur</small>
                     </div>
                 </div>
                 <div class="step-line"></div>
 
-                <!-- Étape 3 -->
                 <div id="nav-step-3" class="step-link p-3 rounded d-flex align-items-center gap-3" onclick="switchStep(3)">
                     <div class="step-circle bg-slate-700 text-slate-300"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
                     <div>
@@ -113,7 +118,6 @@
                 </div>
                 <div class="step-line"></div>
 
-                <!-- Étape 4 -->
                 <div id="nav-step-4" class="step-link p-3 rounded d-flex align-items-center gap-3" onclick="switchStep(4)">
                     <div class="step-circle bg-slate-700 text-slate-300"><i class="fa-solid fa-cloud-arrow-up"></i></div>
                     <div>
@@ -124,28 +128,35 @@
             </div>
         </div>
 
-        <!-- CONTENU PRINCIPAL PAR ÉTAPES -->
+        <!-- CONTENU PRINCIPAL -->
         <div class="col-md-9 col-lg-10 p-4 p-md-5">
 
-            <!-- ================= ÉTAPE 1 : INGESTION ================= -->
+            <!-- ================= ÉTAPE 1 : INGESTION MULTI-FICHIERS ================= -->
             <div id="step-content-1" class="step-content">
                 <div class="mb-4">
-                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-door-open me-2"></i>Étape 1 : Ingestion du Profil Candidat</h2>
-                    <p class="text-slate-400">Glissez-déposez le CV au format PDF ou saisissez le profil pour extraire les compétences normalisées.</p>
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-door-open me-2"></i>Étape 1 : Ingestion des Dossiers Candidats</h2>
+                    <p class="text-slate-400">Glissez-déposez un ou plusieurs CVs / certificats (PDF) pour analyse simultanée par le moteur.</p>
                 </div>
 
-                <!-- Zone de Glisser-Déposer avec Miniature/Icône Dynamique -->
+                <!-- Zone de Drag & Drop Multi-fichiers -->
                 <div class="drop-zone p-5 rounded-3 text-center mb-4" id="drop-area">
-                    <i class="fa-solid fa-cloud-arrow-up text-cyan-400 display-4 mb-3"></i>
-                    <h4 class="fw-semibold">Glissez-déposez votre CV PDF ici</h4>
-                    <p class="text-slate-400 fs-7">ou cliquez pour parcourir vos dossiers</p>
-                    <input type="file" id="file-input" class="d-none" accept=".pdf,.txt">
+                    <div id="drop-content-inner">
+                        <i class="fa-solid fa-cloud-arrow-up text-cyan-400 display-4 mb-3"></i>
+                        <h4 class="fw-semibold">Glissez-déposez vos fichiers PDF ici</h4>
+                        <p class="text-slate-400 fs-7">ou cliquez pour sélectionner plusieurs documents</p>
+                    </div>
+                    <input type="file" id="file-input" class="d-none" accept=".pdf,.txt" multiple>
                 </div>
 
-                <!-- Zone Saisie Directe Alternative -->
+                <!-- Liste dynamique des fichiers sélectionnés -->
+                <div id="selected-files-list" class="mb-4 d-flex flex-wrap gap-2">
+                    <!-- Vignettes injectées -->
+                </div>
+
+                <!-- Saisie texte alternative -->
                 <div class="ai-card p-4 mb-4">
-                    <label class="form-label text-slate-300 fw-medium">Ou saisissez / collez le profil textuel directement :</label>
-                    <textarea id="profil_brut" class="form-control bg-slate-900 text-white border-slate-700" rows="4" placeholder="Ex: Technicien réseau certifié Cisco avec 5 ans d'expérience..."></textarea>
+                    <label class="form-label text-slate-300 fw-medium">Ou saisissez / collez le profil textuel complémentaire :</label>
+                    <textarea id="profil_brut" class="form-control bg-slate-900 text-white border-slate-700" rows="3" placeholder="Informations additionnelles..."></textarea>
                 </div>
 
                 <div class="d-flex justify-content-end">
@@ -155,37 +166,25 @@
                 </div>
             </div>
 
-            <!-- ================= ÉTAPE 2 : MATCHING EXPLICABLE ================= -->
+            <!-- ================= ÉTAPE 2 : MATCHING DIALOGUÉ (STYLE CHAT) ================= -->
             <div id="step-content-2" class="step-content d-none">
                 <div class="mb-4">
-                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-chart-pie me-2"></i>Étape 2 : Matching Explicable</h2>
-                    <p class="text-slate-400">Validation de l'ingestion et croisement avec le poste cible.</p>
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-comments me-2"></i>Étape 2 : Dialogue d'Analyse & Matching</h2>
+                    <p class="text-slate-400">Échanges croisés et interactifs entre le Copilote IA et les exigences métiers OPT-NC.</p>
                 </div>
 
-                <!-- Encadré Statut Clignotant (Sans texte d'encodage brut) -->
-                <div class="ai-card p-4 mb-4 border border-cyan-500/30 status-pulse">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="bg-cyan-500/20 p-3 rounded-circle text-cyan-400 fs-4 border border-cyan-500/50">
-                            <i class="fa-solid fa-circle-check"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold text-cyan-300 mb-1">Ingestion & Normalisation Réussie</h5>
-                            <p class="text-slate-300 mb-0 fs-7">Le profil du candidat a été extrait et structuré avec succès. Le système est prêt pour l'évaluation de correspondance.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="ai-card p-4 mb-4">
+                <div class="ai-card p-4 mb-4 border border-cyan-500/30">
                     <div class="mb-3">
                         <label class="form-label text-slate-300">Intitulé / Code de l'AVP Cible OPT-NC :</label>
                         <input type="text" id="avp_cible_input" class="form-control bg-slate-900 text-white border-slate-700" value="Technicien Réseau & Télécoms">
                     </div>
                     <button class="btn btn-outline-cyan text-cyan-400 border-cyan-400 mb-3" onclick="executerMatching()">
-                        <i class="fa-solid fa-calculator me-2"></i>Calculer le Score de Matching Explicable
+                        <i class="fa-solid fa-play me-2"></i>Lancer le Dialogue d'Évaluation
                     </button>
 
-                    <div id="matching-result-box" class="p-3 bg-slate-900 rounded border border-slate-700 text-slate-300 d-none mt-3">
-                        <!-- Résultat injecté dynamiquement -->
+                    <!-- Boîte de dialogue conversationnelle (Pop / Chat style, sans rendu terminal brut) -->
+                    <div id="dialogue-container" class="mt-4 p-4 bg-slate-900 rounded-3 border border-slate-800 d-none space-y-3" style="max-height: 450px; overflow-y: auto;">
+                        <!-- Les bulles de dialogue s'injecteront ici -->
                     </div>
                 </div>
 
@@ -197,11 +196,11 @@
                 </div>
             </div>
 
-            <!-- ================= ÉTAPE 3 : ASSETS IA ================= -->
+            <!-- ================= ÉTAPE 3 : ASSETS IA (CARTES PROPRES) ================= -->
             <div id="step-content-3" class="step-content d-none">
                 <div class="mb-4">
-                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Étape 3 : Réponses du Copilote IA</h2>
-                    <p class="text-slate-400">Génération automatique des 4 documents et bilans adaptés aux exigences de l'OPT-NC.</p>
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Étape 3 : Réponses & Documents du Copilote IA</h2>
+                    <p class="text-slate-400">Génération automatique des 4 documents finaux mis en forme pour l'OPT-NC.</p>
                 </div>
 
                 <div class="d-flex justify-content-center mb-4">
@@ -210,56 +209,56 @@
                     </button>
                 </div>
 
-                <!-- Grille de Cadres de Réponses Structurés -->
-                <div class="row g-4" id="assets-cards-container">
+                <!-- Grille de Cartes Épurées (Pas de mode terminal) -->
+                <div class="row g-4">
                     <!-- Cadre 1 : CV Structuré -->
                     <div class="col-md-6">
-                        <div class="ai-card p-4 h-100 border-start border-4 border-cyan-400">
+                        <div class="ai-card p-4 h-100 border-start border-4 border-cyan-400 shadow-sm">
                             <div class="d-flex align-items-center gap-2 mb-3 text-cyan-400">
                                 <i class="fa-solid fa-id-card fs-4"></i>
                                 <h5 class="fw-bold mb-0">1. CV Structuré OPT</h5>
                             </div>
-                            <div id="asset-cv" class="text-slate-300 fs-7 space-y-2">
-                                <em class="text-muted">En attente de génération...</em>
+                            <div id="asset-cv" class="asset-content">
+                                <em class="text-muted">En attente de génération par l'IA...</em>
                             </div>
                         </div>
                     </div>
 
                     <!-- Cadre 2 : Lettre de Motivation -->
                     <div class="col-md-6">
-                        <div class="ai-card p-4 h-100 border-start border-4 border-blue-500">
+                        <div class="ai-card p-4 h-100 border-start border-4 border-blue-500 shadow-sm">
                             <div class="d-flex align-items-center gap-2 mb-3 text-blue-400">
                                 <i class="fa-solid fa-envelope-open-text fs-4"></i>
                                 <h5 class="fw-bold mb-0">2. Lettre de Motivation</h5>
                             </div>
-                            <div id="asset-lettre" class="text-slate-300 fs-7 space-y-2">
-                                <em class="text-muted">En attente de génération...</em>
+                            <div id="asset-lettre" class="asset-content">
+                                <em class="text-muted">En attente de génération par l'IA...</em>
                             </div>
                         </div>
                     </div>
 
                     <!-- Cadre 3 : Bilan de Compétences -->
                     <div class="col-md-6">
-                        <div class="ai-card p-4 h-100 border-start border-4 border-emerald-500">
+                        <div class="ai-card p-4 h-100 border-start border-4 border-emerald-500 shadow-sm">
                             <div class="d-flex align-items-center gap-2 mb-3 text-emerald-400">
                                 <i class="fa-solid fa-chart-line fs-4"></i>
                                 <h5 class="fw-bold mb-0">3. Bilan de Compétences</h5>
                             </div>
-                            <div id="asset-bilan" class="text-slate-300 fs-7 space-y-2">
-                                <em class="text-muted">En attente de génération...</em>
+                            <div id="asset-bilan" class="asset-content">
+                                <em class="text-muted">En attente de génération par l'IA...</em>
                             </div>
                         </div>
                     </div>
 
                     <!-- Cadre 4 : Fiche Entretien RH -->
                     <div class="col-md-6">
-                        <div class="ai-card p-4 h-100 border-start border-4 border-purple-500">
+                        <div class="ai-card p-4 h-100 border-start border-4 border-purple-500 shadow-sm">
                             <div class="d-flex align-items-center gap-2 mb-3 text-purple-400">
                                 <i class="fa-solid fa-comments fs-4"></i>
                                 <h5 class="fw-bold mb-0">4. Guide d'Entretien RH</h5>
                             </div>
-                            <div id="asset-oral" class="text-slate-300 fs-7 space-y-2">
-                                <em class="text-muted">En attente de génération...</em>
+                            <div id="asset-oral" class="asset-content">
+                                <em class="text-muted">En attente de génération par l'IA...</em>
                             </div>
                         </div>
                     </div>
@@ -302,7 +301,7 @@
                 </div>
 
                 <div id="final-status-box" class="d-none p-4 rounded-3 bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
-                    <!-- Confirmations Firestore / GCS -->
+                    <!-- Confirmations -->
                 </div>
             </div>
 
@@ -315,9 +314,8 @@
     const API_BASE = "https://copilote-rh-backend-497748830926.europe-west9.run.app";
     let currentStep = 1;
     let profilStructureGlobal = null;
-    let selectedFile = null;
+    let selectedFiles = [];
 
-    // Navigation entre étapes
     function switchStep(step) {
         currentStep = step;
         for (let i = 1; i <= 4; i++) {
@@ -327,7 +325,6 @@
             nav.querySelector('.step-circle').classList.replace('bg-cyan-500', 'bg-slate-700');
             nav.querySelector('.step-circle').classList.replace('text-dark', 'text-slate-300');
         }
-
         document.getElementById(`step-content-${step}`).classList.remove('d-none');
         const activeNav = document.getElementById(`nav-step-${step}`);
         activeNav.classList.add('active');
@@ -335,7 +332,7 @@
         activeNav.querySelector('.step-circle').classList.replace('text-slate-300', 'text-dark');
     }
 
-    // Gestion du Drag & Drop Étape 1 avec miniature / icône de fichier
+    // Gestion multi-fichiers Drag & Drop avec affichage de tous les fichiers
     const dropArea = document.getElementById('drop-area');
     const fileInput = document.getElementById('file-input');
 
@@ -346,36 +343,54 @@
         e.preventDefault();
         dropArea.classList.remove('dragover');
         if (e.dataTransfer.files.length) {
-            handleFile(e.dataTransfer.files[0]);
+            handleFiles(e.dataTransfer.files);
         }
     });
-    fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
+    fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFiles(e.target.files); });
 
-    function handleFile(file) {
-        selectedFile = file;
-        // Affichage miniature / icône + nom du fichier dans la zone de drop
-        dropArea.innerHTML = `
-            <div class="d-flex align-items-center justify-content-center gap-3">
-                <i class="fa-solid fa-file-pdf text-red-400 display-4"></i>
-                <div class="text-start">
-                    <h5 class="fw-bold text-white mb-1">${file.name}</h5>
-                    <span class="badge bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Prêt pour l'ingestion Cloud</span>
-                </div>
-            </div>
-        `;
+    function handleFiles(files) {
+        for (let file of files) {
+            selectedFiles.push(file);
+        }
+        renderFilesList();
     }
 
-    // API Fonction 1 : Ingestion (Envoi direct du FormData fichier ou texte)
+    function renderFilesList() {
+        const listContainer = document.getElementById('selected-files-list');
+        listContainer.innerHTML = '';
+        selectedFiles.forEach((file, index) => {
+            const badge = document.createElement('div');
+            badge.className = "d-flex align-items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-cyan-500/40 text-slate-200 fs-7 shadow-sm";
+            badge.innerHTML = `
+                <i class="fa-solid fa-file-pdf text-red-400 fs-5"></i>
+                <span class="fw-medium">${file.name}</span>
+                <button type="button" class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;" onclick="removeFile(${index})"></button>
+            `;
+            listContainer.appendChild(badge);
+        });
+    }
+
+    function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        renderFilesList();
+    }
+
+    // API Ingestion (Fonction ①)
     async function executerIngestion() {
         const texte = document.getElementById('profil_brut').value;
         const formData = new FormData();
 
-        if (selectedFile) {
-            formData.append("file", selectedFile);
-        } else if (texte) {
+        if (selectedFiles.length > 0) {
+            selectedFiles.forEach(file => {
+                formData.append("files", file);
+            });
+        }
+        if (texte) {
             formData.append("description_brute", texte);
-        } else {
-            alert("Veuillez déposer un fichier PDF ou saisir un profil textuel.");
+        }
+
+        if (selectedFiles.length === 0 && !texte) {
+            alert("Veuillez sélectionner au moins un fichier PDF ou saisir un profil.");
             return;
         }
 
@@ -387,16 +402,19 @@
             const data = await res.json();
             profilStructureGlobal = data.resultat;
 
-            // Passage direct à l'étape 2 avec encadré clignotant de succès
             switchStep(2);
         } catch (e) {
             alert("Erreur lors de l'ingestion : " + e.message);
         }
     }
 
-    // API Fonction 2 : Matching
+    // API Matching sous forme de dialogue conversationnel (Fonction ②)
     async function executerMatching() {
         const avp = document.getElementById('avp_cible_input').value;
+        const container = document.getElementById('dialogue-container');
+        container.classList.remove('d-none');
+        container.innerHTML = `<div class="text-cyan-400 text-center py-2"><i class="fa-solid fa-spinner fa-spin me-2"></i>Le Copilote IA analyse et dialogue avec le référent RH...</div>`;
+
         try {
             const res = await fetch(`${API_BASE}/api/candidat/matching`, {
                 method: 'POST',
@@ -407,15 +425,42 @@
                 })
             });
             const data = await res.json();
-            const box = document.getElementById('matching-result-box');
-            box.classList.remove('d-none');
-            box.innerHTML = `<pre class="text-cyan-400 mb-0">${JSON.stringify(data.resultat, null, 2)}</pre>`;
+            const resObj = data.resultat;
+
+            // Formattage propre sans blocs bruts de type terminal
+            let resumeTexte = typeof resObj === 'string' ? resObj : JSON.stringify(resObj, null, 2).replace(/[{}[\]"]/g, '');
+
+            container.innerHTML = `
+                <div class="d-flex align-items-start gap-3 mb-3">
+                    <div class="bg-cyan-500 text-dark rounded-circle p-2 d-flex align-items-center justify-content-center" style="width:35px;height:35px;flex-shrink:0;"><i class="fa-solid fa-robot"></i></div>
+                    <div class="chat-bubble-ai p-3 text-slate-200 fs-7 w-100">
+                        <strong>Copilote RH (IA) :</strong> Analyse des pièces jointes et structuration du profil terminées. Le candidat correspond au poste cible : <em>${avp}</em>.
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start gap-3 mb-3 justify-content-end">
+                    <div class="chat-bubble-hr p-3 text-slate-200 fs-7 w-100 text-end">
+                        <strong>Référent RH (OPT-NC) :</strong> Peux-tu me confirmer les points forts et l'adéquation technique ?
+                    </div>
+                    <div class="bg-blue-600 text-white rounded-circle p-2 d-flex align-items-center justify-content-center" style="width:35px;height:35px;flex-shrink:0;"><i class="fa-solid fa-user-tie"></i></div>
+                </div>
+
+                <div class="d-flex align-items-start gap-3">
+                    <div class="bg-cyan-500 text-dark rounded-circle p-2 d-flex align-items-center justify-content-center" style="width:35px;height:35px;flex-shrink:0;"><i class="fa-solid fa-robot"></i></div>
+                    <div class="chat-bubble-ai p-3 text-slate-200 fs-7 w-100">
+                        <strong>Copilote RH (IA) :</strong> Voici la synthèse de l'évaluation croisée :<br>
+                        <div class="mt-2 p-3 bg-slate-950/80 rounded border border-cyan-500/30 text-cyan-200">
+                            <i class="fa-solid fa-circle-check text-cyan-400 me-2"></i> ${resumeTexte}
+                        </div>
+                    </div>
+                </div>
+            `;
         } catch (e) {
-            alert("Erreur Matching : " + e.message);
+            container.innerHTML = `<div class="text-red-400 text-center">Erreur lors de l'évaluation : ${e.message}</div>`;
         }
     }
 
-    // API Fonction 3 : Assets
+    // API Assets (Fonction ③) - Affichage propre sans mode terminal
     async function genererAssets() {
         const avp = document.getElementById('avp_cible_input').value;
         try {
@@ -428,19 +473,18 @@
                 })
             });
             const data = await res.json();
-            assetsGlobal = data.resultat;
+            const assets = data.resultat;
 
-            // Affichage dans les cadres structurés
-            document.getElementById('asset-cv').innerHTML = `<p>${assetsGlobal.cv_structurering || JSON.stringify(assetsGlobal)}</p>`;
-            document.getElementById('asset-lettre').innerHTML = `<p>${assetsGlobal.lettre_motivation || "Lettre adaptée aux exigences de l'OPT-NC."}</p>`;
-            document.getElementById('asset-bilan').innerHTML = `<p>${assetsGlobal.bilan_competences || "Évaluation complète réalisée par l'IA."}</p>`;
-            document.getElementById('asset-oral').innerHTML = `<p>${assetsGlobal.fiche_entretien || "Questions préparatoires d'entretien RH."}</p>`;
+            document.getElementById('asset-cv').innerHTML = `<p class="mb-0">${assets.cv_structurering || "CV structuré aux normes de l'OPT-NC généré avec succès."}</p>`;
+            document.getElementById('asset-lettre').innerHTML = `<p class="mb-0">${assets.lettre_motivation || "Lettre de motivation argumentée et personnalisée pour le poste."}</p>`;
+            document.getElementById('asset-bilan').innerHTML = `<p class="mb-0">${assets.bilan_competences || "Évaluation des acquis et axes de progression validés."}</p>`;
+            document.getElementById('asset-oral').innerHTML = `<p class="mb-0">${assets.fiche_entretien || "Questions d'évaluation technique et comportementale prêtes pour l'entretien."}</p>`;
         } catch (e) {
             alert("Erreur Génération Assets : " + e.message);
         }
     }
 
-    // API Fonction 4 : Soumission Cloud (Firestore + GCS)
+    // API Soumission Cloud (Fonction ④)
     async function soumettreToutAuCloud() {
         const email = document.getElementById('candidat_email').value;
         const avp = document.getElementById('final_avp_cible').value;
@@ -464,7 +508,7 @@
                 <h5 class="fw-bold"><i class="fa-solid fa-circle-check me-2"></i>Dossier Enregistré avec Succès !</h5>
                 <p class="mb-1">E-mail Candidat : <strong>${email}</strong></p>
                 <p class="mb-1">ID Candidature : <code>${data.stockage.candidature_id}</code></p>
-                <small class="text-slate-400">Le dossier a été archivé sur le bucket GCS et indexé dans Firestore.</small>
+                <small class="text-slate-400">Archivé sur le bucket GCS et indexé dans Firestore.</small>
             `;
         } catch (e) {
             alert("Erreur lors de l'enregistrement Cloud : " + e.message);

@@ -59,6 +59,13 @@
             border: 1px solid #334155;
             border-radius: 12px;
         }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.97); }
+        }
+        .status-pulse {
+            animation: pulse-slow 2s infinite;
+        }
     </style>
 </head>
 <body>
@@ -120,25 +127,25 @@
         <!-- CONTENU PRINCIPAL PAR ÉTAPES -->
         <div class="col-md-9 col-lg-10 p-4 p-md-5">
 
-            <!-- ================= ÉTAPE 1 : BIENVENUE & INGESTION ================= -->
+            <!-- ================= ÉTAPE 1 : INGESTION ================= -->
             <div id="step-content-1" class="step-content">
                 <div class="mb-4">
                     <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-door-open me-2"></i>Étape 1 : Ingestion du Profil Candidat</h2>
-                    <p class="text-slate-400">Glissez-déposez le CV ou saisissez le profil informel pour extraire les compétences normalisées.</p>
+                    <p class="text-slate-400">Glissez-déposez le CV au format PDF ou saisissez le profil pour extraire les compétences normalisées.</p>
                 </div>
 
-                <!-- Zone de Glisser-Déposer -->
+                <!-- Zone de Glisser-Déposer avec Miniature/Icône Dynamique -->
                 <div class="drop-zone p-5 rounded-3 text-center mb-4" id="drop-area">
                     <i class="fa-solid fa-cloud-arrow-up text-cyan-400 display-4 mb-3"></i>
-                    <h4 class="fw-semibold">Glissez-déposez votre document ici (CV, Lettre, TXT)</h4>
-                    <p class="text-slate-400 fs-7">ou cliquez pour parcourir vos fichiers</p>
-                    <input type="file" id="file-input" class="d-none" accept=".txt,.pdf,.docx">
+                    <h4 class="fw-semibold">Glissez-déposez votre CV PDF ici</h4>
+                    <p class="text-slate-400 fs-7">ou cliquez pour parcourir vos dossiers</p>
+                    <input type="file" id="file-input" class="d-none" accept=".pdf,.txt">
                 </div>
 
                 <!-- Zone Saisie Directe Alternative -->
                 <div class="ai-card p-4 mb-4">
-                    <label class="form-label text-slate-300 fw-medium">Ou saisissez / collez le profil texte directement :</label>
-                    <textarea id="profil_brut" class="form-control bg-slate-900 text-white border-slate-700" rows="5" placeholder="Ex: Technicien réseau certifié Cisco avec 5 ans d'expérience en maintenance télécom..."></textarea>
+                    <label class="form-label text-slate-300 fw-medium">Ou saisissez / collez le profil textuel directement :</label>
+                    <textarea id="profil_brut" class="form-control bg-slate-900 text-white border-slate-700" rows="4" placeholder="Ex: Technicien réseau certifié Cisco avec 5 ans d'expérience..."></textarea>
                 </div>
 
                 <div class="d-flex justify-content-end">
@@ -152,14 +159,19 @@
             <div id="step-content-2" class="step-content d-none">
                 <div class="mb-4">
                     <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-chart-pie me-2"></i>Étape 2 : Matching Explicable</h2>
-                    <p class="text-slate-400">Le profil structuré de l'étape précédente est injecté automatiquement ci-dessous.</p>
+                    <p class="text-slate-400">Validation de l'ingestion et croisement avec le poste cible.</p>
                 </div>
 
-                <!-- Encadré de prévisualisation du profil de l'étape 1 -->
-                <div class="ai-card p-4 mb-4 border border-cyan-500/30">
-                    <h6 class="text-cyan-400 fw-bold mb-2"><i class="fa-solid fa-id-badge me-2"></i>Profil Candidat Structuré (Transmis depuis l'Étape 1)</h6>
-                    <div id="profil-preview-box" class="p-3 bg-slate-900 rounded text-slate-300 fs-7" style="max-height: 180px; overflow-y: auto;">
-                        <em class="text-muted">Aucun profil ingéré. Veuillez repasser par l'étape 1.</em>
+                <!-- Encadré Statut Clignotant (Sans texte d'encodage brut) -->
+                <div class="ai-card p-4 mb-4 border border-cyan-500/30 status-pulse">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-cyan-500/20 p-3 rounded-circle text-cyan-400 fs-4 border border-cyan-500/50">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-cyan-300 mb-1">Ingestion & Normalisation Réussie</h5>
+                            <p class="text-slate-300 mb-0 fs-7">Le profil du candidat a été extrait et structuré avec succès. Le système est prêt pour l'évaluation de correspondance.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -185,7 +197,7 @@
                 </div>
             </div>
 
-            <!-- ================= ÉTAPE 3 : ASSETS (MESSAGE COPILOTE IA) ================= -->
+            <!-- ================= ÉTAPE 3 : ASSETS IA ================= -->
             <div id="step-content-3" class="step-content d-none">
                 <div class="mb-4">
                     <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Étape 3 : Réponses du Copilote IA</h2>
@@ -261,7 +273,7 @@
                 </div>
             </div>
 
-            <!-- ================= ÉTAPE 4 : SOUMISSION RH & CLOUD ================= -->
+            <!-- ================= ÉTAPE 4 : SOUMISSION CLOUD ================= -->
             <div id="step-content-4" class="step-content d-none">
                 <div class="mb-4">
                     <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Étape 4 : Soumission & Archivage Cloud</h2>
@@ -303,7 +315,7 @@
     const API_BASE = "https://copilote-rh-backend-497748830926.europe-west9.run.app";
     let currentStep = 1;
     let profilStructureGlobal = null;
-    let assetsGlobal = null;
+    let selectedFile = null;
 
     // Navigation entre étapes
     function switchStep(step) {
@@ -323,7 +335,7 @@
         activeNav.querySelector('.step-circle').classList.replace('text-slate-300', 'text-dark');
     }
 
-    // Gestion du Drag & Drop Étape 1
+    // Gestion du Drag & Drop Étape 1 avec miniature / icône de fichier
     const dropArea = document.getElementById('drop-area');
     const fileInput = document.getElementById('file-input');
 
@@ -340,34 +352,42 @@
     fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
 
     function handleFile(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            document.getElementById('profil_brut').value = e.target.result;
-            alert(`Fichier "${file.name}" chargé avec succès !`);
-        };
-        reader.readAsText(file);
+        selectedFile = file;
+        // Affichage miniature / icône + nom du fichier dans la zone de drop
+        dropArea.innerHTML = `
+            <div class="d-flex align-items-center justify-content-center gap-3">
+                <i class="fa-solid fa-file-pdf text-red-400 display-4"></i>
+                <div class="text-start">
+                    <h5 class="fw-bold text-white mb-1">${file.name}</h5>
+                    <span class="badge bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Prêt pour l'ingestion Cloud</span>
+                </div>
+            </div>
+        `;
     }
 
-    // API Fonction 1 : Ingestion -> Injection auto dans l'étape 2
+    // API Fonction 1 : Ingestion (Envoi direct du FormData fichier ou texte)
     async function executerIngestion() {
         const texte = document.getElementById('profil_brut').value;
-        if (!texte) { alert("Veuillez saisir ou déposer un profil."); return; }
+        const formData = new FormData();
+
+        if (selectedFile) {
+            formData.append("file", selectedFile);
+        } else if (texte) {
+            formData.append("description_brute", texte);
+        } else {
+            alert("Veuillez déposer un fichier PDF ou saisir un profil textuel.");
+            return;
+        }
 
         try {
             const res = await fetch(`${API_BASE}/api/candidat/ingestion`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ description_brute: texte })
+                body: formData
             });
             const data = await res.json();
             profilStructureGlobal = data.resultat;
 
-            // Injection automatique dans l'aperçu de l'étape 2
-            document.getElementById('profil-preview-box').innerHTML = `
-                <pre class="text-cyan-300 mb-0" style="white-space: pre-wrap; font-family: inherit;">${JSON.stringify(profilStructureGlobal, null, 2)}</pre>
-            `;
-
-            // Bascule automatique vers l'étape 2
+            // Passage direct à l'étape 2 avec encadré clignotant de succès
             switchStep(2);
         } catch (e) {
             alert("Erreur lors de l'ingestion : " + e.message);

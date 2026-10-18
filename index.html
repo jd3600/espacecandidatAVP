@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Tailwind CSS pour un design fluide -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -58,6 +58,14 @@
             background: #1e293b;
             border: 1px solid #334155;
             border-radius: 12px;
+            transition: all 0.25s ease;
+        }
+        .ai-card-clickable {
+            cursor: pointer;
+        }
+        .ai-card-clickable:hover {
+            border-color: #06b6d4 !important;
+            transform: translateY(-2px);
         }
         @keyframes pulse-slow {
             0%, 100% { opacity: 1; transform: scale(1); }
@@ -119,7 +127,7 @@
                     <div class="step-circle bg-slate-700 text-slate-300"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
                     <div>
                         <div class="fw-bold fs-6">3. Assets IA</div>
-                        <small class="text-slate-400">Documents & Bilan</small>
+                        <small class="text-slate-400">Documents & PDF DRH</small>
                     </div>
                 </div>
                 <div class="step-line"></div>
@@ -144,7 +152,6 @@
                     <p class="text-slate-400">Déposez vos fichiers PDF (CVs, certificats) pour lancer l'analyse et le croisement automatique.</p>
                 </div>
 
-                <!-- Clignotant de succès -->
                 <div id="ingestion-success-badge" class="d-none p-3 mb-4 rounded-xl bg-cyan-950/60 border border-cyan-500/60 text-cyan-300 status-pulse d-flex align-items-center gap-3">
                     <i class="fa-solid fa-circle-check fs-3 text-cyan-400"></i>
                     <div>
@@ -153,7 +160,6 @@
                     </div>
                 </div>
 
-                <!-- Zone Drag & Drop -->
                 <div class="drop-zone p-5 rounded-3 text-center mb-3" id="drop-area">
                     <i class="fa-solid fa-cloud-arrow-up text-cyan-400 display-4 mb-3"></i>
                     <h4 class="fw-semibold">Glissez-déposez vos fichiers PDF ici</h4>
@@ -161,7 +167,6 @@
                     <input type="file" id="file-input" class="d-none" accept=".pdf,.txt" multiple>
                 </div>
 
-                <!-- Liste des vignettes + Bouton d'action direct -->
                 <div id="files-actions-container" class="mb-4 d-none">
                     <div id="selected-files-list" class="d-flex flex-wrap gap-2 mb-3"></div>
                     <button class="btn btn-cyan bg-cyan-500 text-dark fw-bold px-4 py-2 shadow" onclick="lancerIngestionEtMatching()">
@@ -169,7 +174,6 @@
                     </button>
                 </div>
 
-                <!-- Zone Saisie Texte Alternative -->
                 <div class="ai-card p-4 mb-4">
                     <label class="form-label text-slate-300 fw-medium">Ou saisissez / collez le profil textuel :</label>
                     <textarea id="profil_brut" class="form-control bg-slate-900 text-white border-slate-700" rows="3" placeholder="Ex: Expérience en management ou technique..."></textarea>
@@ -182,14 +186,13 @@
                 </div>
             </div>
 
-            <!-- ================= ÉTAPE 2 : RÉSULTATS DE LA RECHERCHE (POSTES PROPICES) ================= -->
+            <!-- ================= ÉTAPE 2 : POSTES PROPICES ================= -->
             <div id="step-content-2" class="step-content d-none">
                 <div class="mb-4">
                     <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-sliders me-2"></i>Étape 2 : Postes AVP Recommandés par l'IA</h2>
-                    <p class="text-slate-400">Sélectionnés dynamiquement depuis le catalogue Apigee de l'OPT-NC en fonction du profil ingéré. Cliquez sur une carte pour ouvrir les détails.</p>
+                    <p class="text-slate-400">Sélectionnés dynamiquement depuis le catalogue Apigee de l'OPT-NC. Cliquez sur une carte pour ouvrir les détails.</p>
                 </div>
 
-                <!-- Grille dynamique des résultats de recherche -->
                 <div class="row g-3 mb-4" id="dynamic-avp-results-container">
                     <div class="col-12 text-center text-slate-400 py-5">
                         <i class="fa-solid fa-spinner fa-spin fa-2x mb-3 text-cyan-400"></i>
@@ -205,56 +208,105 @@
                 </div>
             </div>
 
-            <!-- ================= ÉTAPE 3 : ASSETS IA ================= -->
+            <!-- ================= ÉTAPE 3 : ASSETS IA & PIÈCES DIPLÔMES ================= -->
             <div id="step-content-3" class="step-content d-none">
                 <div class="mb-4">
-                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Étape 3 : Réponses du Copilote IA</h2>
-                    <p class="text-slate-400">Génération automatique des documents professionnels.</p>
+                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Étape 3 : Réponses du Copilote IA & Pièces Requis</h2>
+                    <p class="text-slate-400">Génération automatique des documents professionnels et suivi des pièces jointes pour l'OPT-NC.</p>
                 </div>
 
+                <!-- Bouton de Génération Globale -->
                 <div class="d-flex justify-content-center mb-4">
-                    <button class="btn btn-cyan bg-gradient-to-r from-cyan-500 to-blue-600 text-white fw-bold px-4 py-2 shadow" onclick="genererAssets()">
-                        <i class="fa-solid fa-gears me-2"></i>Lancer la Génération des 4 Assets
+                    <button id="btn-generer-assets" class="btn btn-cyan bg-gradient-to-r from-cyan-500 to-blue-600 text-white fw-bold px-5 py-3 shadow-lg fs-6" onclick="genererAssets()">
+                        <i class="fa-solid fa-gears me-2"></i>Lancer la Génération des Assets & PDF
                     </button>
                 </div>
 
-                <div class="row g-4">
+                <!-- GRILLE DES 4 CARS D'ASSETS AVEC BADGES DYNAMIQUES -->
+                <div class="row g-4 mb-4">
+                    <!-- Carré 1 : CV Structuré OPT -->
                     <div class="col-md-6">
                         <div class="ai-card p-4 h-100 border-start border-4 border-cyan-400">
-                            <div class="d-flex align-items-center gap-2 mb-3 text-cyan-400">
-                                <i class="fa-solid fa-id-card fs-4"></i>
-                                <h5 class="fw-bold mb-0">1. CV Structuré OPT</h5>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-2 text-cyan-400">
+                                    <i class="fa-solid fa-id-card fs-4"></i>
+                                    <h5 class="fw-bold mb-0">1. CV Structuré OPT</h5>
+                                </div>
+                                <span id="badge-status-cv" class="badge bg-red-500/20 text-red-400 border border-red-500/40 px-3 py-1 fs-7">
+                                    <i class="fa-solid fa-circle-xmark me-1"></i>À Générer
+                                </span>
                             </div>
                             <div id="asset-cv" class="text-slate-300 fs-7"><em class="text-muted">En attente de génération...</em></div>
                         </div>
                     </div>
+
+                    <!-- Carré 2 : Lettre de Motivation -->
                     <div class="col-md-6">
                         <div class="ai-card p-4 h-100 border-start border-4 border-blue-500">
-                            <div class="d-flex align-items-center gap-2 mb-3 text-blue-400">
-                                <i class="fa-solid fa-envelope-open-text fs-4"></i>
-                                <h5 class="fw-bold mb-0">2. Lettre de Motivation</h5>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-2 text-blue-400">
+                                    <i class="fa-solid fa-envelope-open-text fs-4"></i>
+                                    <h5 class="fw-bold mb-0">2. Lettre de Motivation</h5>
+                                </div>
+                                <span id="badge-status-lettre" class="badge bg-red-500/20 text-red-400 border border-red-500/40 px-3 py-1 fs-7">
+                                    <i class="fa-solid fa-circle-xmark me-1"></i>À Générer
+                                </span>
                             </div>
                             <div id="asset-lettre" class="text-slate-300 fs-7"><em class="text-muted">En attente de génération...</em></div>
                         </div>
                     </div>
+
+                    <!-- Carré 3 : Fiche de Renseignements PDF (Cliquable pour choix) -->
                     <div class="col-md-6">
-                        <div class="ai-card p-4 h-100 border-start border-4 border-emerald-500">
-                            <div class="d-flex align-items-center gap-2 mb-3 text-emerald-400">
-                                <i class="fa-solid fa-chart-line fs-4"></i>
-                                <h5 class="fw-bold mb-0">3. Bilan de Compétences</h5>
+                        <div class="ai-card ai-card-clickable p-4 h-100 border-start border-4 border-emerald-500" onclick="ouvrirModalFicheRenseignements()">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-2 text-emerald-400">
+                                    <i class="fa-solid fa-file-pdf fs-4"></i>
+                                    <h5 class="fw-bold mb-0">3. Fiche Renseignements PDF</h5>
+                                </div>
+                                <span id="badge-status-fiche" class="badge bg-red-500/20 text-red-400 border border-red-500/40 px-3 py-1 fs-7">
+                                    <i class="fa-solid fa-pen me-1"></i>Saisir / Cocher
+                                </span>
                             </div>
-                            <div id="asset-bilan" class="text-slate-300 fs-7"><em class="text-muted">En attente de génération...</em></div>
+                            <div id="asset-fiche-pdf" class="text-slate-300 fs-7">
+                                <p class="mb-2">Document officiel DRH OPT-NC.</p>
+                                <span class="text-cyan-400 fw-semibold fs-7"><i class="fa-solid fa-sliders me-1"></i> Cliquer pour compléter les informations légales</span>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Carré 4 : Attestation de Non-Rupture PDF (Cliquable pour choix) -->
                     <div class="col-md-6">
-                        <div class="ai-card p-4 h-100 border-start border-4 border-purple-500">
-                            <div class="d-flex align-items-center gap-2 mb-3 text-purple-400">
-                                <i class="fa-solid fa-comments fs-4"></i>
-                                <h5 class="fw-bold mb-0">4. Guide d'Entretien RH</h5>
+                        <div class="ai-card ai-card-clickable p-4 h-100 border-start border-4 border-purple-500" onclick="ouvrirModalAttestation()">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-2 text-purple-400">
+                                    <i class="fa-solid fa-file-signature fs-4"></i>
+                                    <h5 class="fw-bold mb-0">4. Attestation Non-Rupture</h5>
+                                </div>
+                                <span id="badge-status-attestation" class="badge bg-red-500/20 text-red-400 border border-red-500/40 px-3 py-1 fs-7">
+                                    <i class="fa-solid fa-pen me-1"></i>Saisir / Cocher
+                                </span>
                             </div>
-                            <div id="asset-oral" class="text-slate-300 fs-7"><em class="text-muted">En attente de génération...</em></div>
+                            <div id="asset-attestation-pdf" class="text-slate-300 fs-7">
+                                <p class="mb-2">Attestation sur l'honneur de non-bénéfice de rupture conventionnelle.</p>
+                                <span class="text-cyan-400 fw-semibold fs-7"><i class="fa-solid fa-signature me-1"></i> Cliquer pour renseigner la signature & lieu</span>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- ZONE DRAG & DROP DÉDIÉE : DIPLÔMES ET JUSTIFICATIFS COMPLÉMENTAIRES -->
+                <div class="ai-card p-4 border border-cyan-500/40">
+                    <h5 class="fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-graduation-cap me-2"></i>Ajouter des Diplômes ou Justificatifs Complémentaires</h5>
+                    <p class="text-slate-400 fs-7 mb-3">Déposez vos diplômes, attestation de citoyenneté ou justificatifs de résidence pour compléter votre dossier de candidature.</p>
+                    
+                    <div class="drop-zone p-4 rounded-3 text-center" id="drop-area-diplomes">
+                        <i class="fa-solid fa-file-circle-plus text-cyan-400 fs-2 mb-2"></i>
+                        <h6 class="fw-semibold mb-1">Glissez vos diplômes & justificatifs ici</h6>
+                        <small class="text-slate-400">Formats acceptés : PDF, PNG, JPG</small>
+                        <input type="file" id="file-input-diplomes" class="d-none" accept=".pdf,.png,.jpg,.jpeg" multiple>
+                    </div>
+                    <div id="diplomes-files-list" class="d-flex flex-wrap gap-2 mt-3"></div>
                 </div>
 
                 <div class="d-flex justify-content-between mt-4">
@@ -280,7 +332,7 @@
 
                     <div class="mb-3">
                         <label class="form-label text-slate-300 fw-medium">Poste Cible Confirmé</label>
-                        <input type="text" id="final_avp_cible" class="form-control bg-slate-900 text-white border-slate-700" value="Non défini">
+                        <input type="text" id="final_avp_cible" class="form-control bg-slate-900 text-white border-slate-700" value="Non défini" readonly>
                     </div>
 
                     <button class="btn btn-success bg-emerald-600 border-0 w-100 py-3 fw-bold fs-6 shadow" onclick="soumettreToutAuCloud()">
@@ -295,7 +347,7 @@
     </div>
 </div>
 
-<!-- POP-UP MODAL POUR DÉTAIL MATCHING AVP -->
+<!-- MODAL 1 : DÉTAIL MATCHING AVP -->
 <div class="modal fade" id="avpDetailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content shadow-lg border border-cyan-500/40">
@@ -312,12 +364,106 @@
     </div>
 </div>
 
+<!-- MODAL 2 : INFORMATIONS FICHE DE RENSEIGNEMENTS PDF -->
+<div class="modal fade" id="modalFicheRenseignements" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content shadow-lg border border-emerald-500/40">
+            <div class="modal-header border-bottom border-slate-700 bg-slate-900">
+                <h5 class="modal-title fw-bold text-emerald-400"><i class="fa-solid fa-file-pen me-2"></i>Options Fiche de Renseignements OPT-NC</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 bg-slate-900/95">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label text-slate-300 fs-7 fw-medium">Civilité *</label>
+                        <select id="inj_civilite" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
+                            <option value="M">M. (Monsieur)</option>
+                            <option value="MME">Mme (Madame)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-slate-300 fs-7 fw-medium">Nationalité Française *</label>
+                        <select id="inj_nationalite" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
+                            <option value="true">Oui</option>
+                            <option value="false">Non</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-slate-300 fs-7 fw-medium">Statut Professionnel *</label>
+                        <select id="inj_statut_pro" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
+                            <option value="prive">Secteur Privé / Recherche emploi</option>
+                            <option value="fct_nc">Fonctionnaire NC / Communes</option>
+                            <option value="contractuel_nc">Agent Contractuel FP de NC</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-slate-300 fs-7 fw-medium">Nom et Prénoms *</label>
+                        <input type="text" id="inj_nom_prenom" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex: Japheth ROKO">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-slate-300 fs-7 fw-medium">Téléphone *</label>
+                        <input type="text" id="inj_telephone" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex: 77.12.34">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-slate-300 fs-7 fw-medium">Adresse E-mail *</label>
+                        <input type="email" id="inj_email" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="exemple@domaine.nc">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-slate-300 fs-7 fw-medium">Citoyenneté Calédonienne *</label>
+                        <select id="inj_citoyen" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
+                            <option value="true">Citoyen Calédonien</option>
+                            <option value="false">Résident NC</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-slate-300 fs-7 fw-medium">Années de Résidence</label>
+                        <input type="text" id="inj_annees_residence" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex: 15 ans">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-slate-300 fs-7 fw-medium">Reconnaissance Handicap</label>
+                        <select id="inj_handicap" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
+                            <option value="false">Non</option>
+                            <option value="true">Oui</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top border-slate-700 bg-slate-900">
+                <button type="button" class="btn btn-success bg-emerald-600 border-0 text-white fw-bold" onclick="validerFicheRenseignements()">Valider & Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 3 : ATTESTATION NON-RUPTURE PDF -->
+<div class="modal fade" id="modalAttestation" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border border-purple-500/40">
+            <div class="modal-header border-bottom border-slate-700 bg-slate-900">
+                <h5 class="modal-title fw-bold text-purple-400"><i class="fa-solid fa-signature me-2"></i>Signature Attestation Non-Rupture</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 bg-slate-900/95">
+                <div class="mb-3">
+                    <label class="form-label text-slate-300 fs-7 fw-medium">Lieu de Signature *</label>
+                    <input type="text" id="inj_lieu_signature" class="form-control bg-slate-900 text-white border-slate-700 fs-7" value="Nouméa">
+                </div>
+                <p class="fs-7 text-slate-400 mb-0"><i class="fa-solid fa-info-circle me-1"></i> En enregistrant, l'attestation sur l'honneur sera automatiquement datée du jour et signée numériquement.</p>
+            </div>
+            <div class="modal-footer border-top border-slate-700 bg-slate-900">
+                <button type="button" class="btn btn-purple bg-purple-600 border-0 text-white fw-bold" onclick="validerAttestation()">Valider & Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- SCRIPTS JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const API_BASE = "https://copilote-rh-backend-497748830926.europe-west9.run.app";
     let profilStructureGlobal = null;
     let selectedFiles = [];
+    let selectedDiplomesFiles = [];
     let postesPropicesGlobal = [];
     let posteCibleActuel = "";
 
@@ -336,10 +482,9 @@
         activeNav.querySelector('.step-circle').classList.replace('text-slate-300', 'text-dark');
     }
 
-    // Gestion Drag & Drop
+    // Gestion Drag & Drop Étape 1
     const dropArea = document.getElementById('drop-area');
     const fileInput = document.getElementById('file-input');
-
     dropArea.addEventListener('click', () => fileInput.click());
     dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.classList.add('dragover'); });
     dropArea.addEventListener('dragleave', () => dropArea.classList.remove('dragover'));
@@ -382,7 +527,70 @@
         renderFilesList();
     }
 
-    // Fonction d'Ingestion globale couplée au matching automatique (Étape 1 -> Étape 2 dynamique)
+    // Gestion Drag & Drop Diplômes Étape 3
+    const dropAreaDiplomes = document.getElementById('drop-area-diplomes');
+    const fileInputDiplomes = document.getElementById('file-input-diplomes');
+    dropAreaDiplomes.addEventListener('click', () => fileInputDiplomes.click());
+    dropAreaDiplomes.addEventListener('dragover', (e) => { e.preventDefault(); dropAreaDiplomes.classList.add('dragover'); });
+    dropAreaDiplomes.addEventListener('dragleave', () => dropAreaDiplomes.classList.remove('dragover'));
+    dropAreaDiplomes.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropAreaDiplomes.classList.remove('dragover');
+        if (e.dataTransfer.files.length) { handleDiplomesFiles(e.dataTransfer.files); }
+    });
+    fileInputDiplomes.addEventListener('change', (e) => { if (e.target.files.length) handleDiplomesFiles(e.target.files); });
+
+    function handleDiplomesFiles(files) {
+        for (let file of files) { selectedDiplomesFiles.push(file); }
+        renderDiplomesFilesList();
+    }
+
+    function renderDiplomesFilesList() {
+        const container = document.getElementById('diplomes-files-list');
+        container.innerHTML = '';
+        selectedDiplomesFiles.forEach((file, index) => {
+            const badge = document.createElement('div');
+            badge.className = "d-flex align-items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-emerald-500/40 text-emerald-300 fs-7 shadow-sm";
+            badge.innerHTML = `
+                <i class="fa-solid fa-graduation-cap text-emerald-400 fs-5"></i>
+                <span class="fw-medium">${file.name}</span>
+                <button type="button" class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;" onclick="removeDiplomeFile(${index})"></button>
+            `;
+            container.appendChild(badge);
+        });
+    }
+
+    function removeDiplomeFile(index) {
+        selectedDiplomesFiles.splice(index, 1);
+        renderDiplomesFilesList();
+    }
+
+    // Modaux Étape 3
+    function ouvrirModalFicheRenseignements() {
+        new bootstrap.Modal(document.getElementById('modalFicheRenseignements')).show();
+    }
+
+    function validerFicheRenseignements() {
+        const badge = document.getElementById('badge-status-fiche');
+        badge.className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
+        badge.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Prêt & Rempli`;
+        
+        bootstrap.Modal.getInstance(document.getElementById('modalFicheRenseignements')).hide();
+    }
+
+    function ouvrirModalAttestation() {
+        new bootstrap.Modal(document.getElementById('modalAttestation')).show();
+    }
+
+    function validerAttestation() {
+        const badge = document.getElementById('badge-status-attestation');
+        badge.className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
+        badge.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Prêt & Signé`;
+        
+        bootstrap.Modal.getInstance(document.getElementById('modalAttestation')).hide();
+    }
+
+    // Ingestion & Matching automatique
     async function lancerIngestionEtMatching() {
         const texte = document.getElementById('profil_brut').value;
         if (selectedFiles.length === 0 && !texte) {
@@ -399,7 +607,6 @@
         }
 
         try {
-            // 1. Appel Ingestion (Fonction 1)
             const res1 = await fetch(`${API_BASE}/api/candidat/ingestion`, {
                 method: 'POST',
                 body: formData
@@ -407,12 +614,10 @@
             const data1 = await res1.json();
             profilStructureGlobal = data1.resultat;
 
-            // Affichage du clignotant de succès sur l'Étape 1
             document.getElementById('ingestion-success-badge').classList.remove('d-none');
 
-            // 2. Appel Matching automatique sur TOUTES les offres Apigee (Fonction 2)
             const container2 = document.getElementById('dynamic-avp-results-container');
-            container2.innerHTML = `<div class="col-12 text-center text-cyan-400 py-5"><i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i><p>Croisement en cours avec les 84 postes de l'API Apigee...</p></div>`;
+            container2.innerHTML = `<div class="col-12 text-center text-cyan-400 py-5"><i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i><p>Croisement en cours avec l'API Apigee de l'OPT-NC...</p></div>`;
 
             const res2 = await fetch(`${API_BASE}/api/candidat/matching`, {
                 method: 'POST',
@@ -431,7 +636,6 @@
             postesPropicesGlobal = resObj.postes_propices || [];
             afficherPostesPropicesDynamiques(postesPropicesGlobal);
 
-            // Bascule automatique vers l'Étape 2 après un court délai
             setTimeout(() => {
                 switchStep(2);
             }, 800);
@@ -441,7 +645,6 @@
         }
     }
 
-    // Affichage exclusif des résultats de la recherche dans l'Étape 2
     function afficherPostesPropicesDynamiques(postes) {
         const container = document.getElementById('dynamic-avp-results-container');
         container.innerHTML = '';
@@ -468,7 +671,6 @@
         });
     }
 
-    // Ouverture Pop-up Modal pour le poste propice sélectionné
     function ouvrirModalDetailPropice(idx) {
         const p = postesPropicesGlobal[idx];
         let fiche = p.fiche_explicable || p;
@@ -509,26 +711,71 @@
         switchStep(3);
     }
 
-    // Génération des Assets (Étape 3)
+    // Génération des Assets & Fichiers PDF (Étape 3)
     async function genererAssets() {
+        const btn = document.getElementById('btn-generer-assets');
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i>Génération des Assets en cours...`;
+
+        const choixUtilisateur = {
+            civilite: document.getElementById('inj_civilite').value,
+            nationalite_francaise: document.getElementById('inj_nationalite').value === "true",
+            statut_pro: document.getElementById('inj_statut_pro').value,
+            citoyen_caledonien: document.getElementById('inj_citoyen').value === "true",
+            handicap: document.getElementById('inj_handicap').value === "true",
+            lieu_signature: document.getElementById('inj_lieu_signature').value || "Nouméa",
+            poste_intitule: posteCibleActuel || "Poste OPT-NC"
+        };
+
+        const donneesCandidat = {
+            nom_prenom: document.getElementById('inj_nom_prenom').value || "Candidat NC",
+            telephone: document.getElementById('inj_telephone').value || "",
+            email: document.getElementById('inj_email').value || "",
+            annees_residence: document.getElementById('inj_annees_residence').value || "",
+            diplomes: "Diplômes en adéquation"
+        };
+
+        if (donneesCandidat.email) {
+            document.getElementById('candidat_email').value = donneesCandidat.email;
+        }
+
         try {
             const res = await fetch(`${API_BASE}/api/candidat/assets`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     profil_structurer: JSON.stringify(profilStructureGlobal || "Profil Standard"),
-                    id_avp_cible: posteCibleActuel || "Poste OPT-NC"
+                    id_avp_cible: posteCibleActuel || "Poste OPT-NC",
+                    choix_utilisateur: choixUtilisateur,
+                    donnees_candidat_raw: donneesCandidat
                 })
             });
+
             const data = await res.json();
             const assets = data.resultat;
 
-            document.getElementById('asset-cv').innerHTML = `<p class="mb-0">${assets.cv_structurering || "CV structuré aux normes de l'OPT-NC généré avec succès."}</p>`;
-            document.getElementById('asset-lettre').innerHTML = `<p class="mb-0">${assets.lettre_motivation || "Lettre de motivation personnalisée pour le poste."}</p>`;
-            document.getElementById('asset-bilan').innerHTML = `<p class="mb-0">${assets.bilan_competences || "Évaluation des acquis et axes de progression."}</p>`;
-            document.getElementById('asset-oral').innerHTML = `<p class="mb-0">${assets.fiche_entretien || "Questions d'évaluation technique préparées."}</p>`;
+            // Remplissage texte des assets
+            document.getElementById('asset-cv').innerHTML = `<p class="mb-0 text-slate-200">${assets.cv_oriente || "CV structuré généré avec succès."}</p>`;
+            document.getElementById('asset-lettre').innerHTML = `<p class="mb-0 text-slate-200">${assets.lettre_motivation || "Lettre de motivation générée."}</p>`;
+
+            // Virer les badges au vert
+            document.getElementById('badge-status-cv').className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
+            document.getElementById('badge-status-cv').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Prêt & Généré`;
+
+            document.getElementById('badge-status-lettre').className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
+            document.getElementById('badge-status-lettre').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Prêt & Rédigé`;
+
+            document.getElementById('badge-status-fiche').className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
+            document.getElementById('badge-status-fiche').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>PDF Fusionné`;
+
+            document.getElementById('badge-status-attestation').className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
+            document.getElementById('badge-status-attestation').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>PDF Fusionné`;
+
         } catch (e) {
             alert("Erreur Génération Assets : " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fa-solid fa-gears me-2"></i>Lancer la Génération des Assets & PDF`;
         }
     }
 

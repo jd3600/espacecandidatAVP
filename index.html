@@ -524,71 +524,169 @@
     </div>
 </div>
 
-<!-- MODAL 2 : INFORMATIONS FICHE DE RENSEIGNEMENTS PDF -->
+<!-- MODAL 2 : FICHE DE RENSEIGNEMENTS OFFICIELLE OPT-NC -->
 <div class="modal fade" id="modalFicheRenseignements" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content shadow-lg border border-emerald-500/40">
             <div class="modal-header border-bottom border-slate-700 bg-slate-900">
-                <h5 class="modal-title fw-bold text-emerald-400"><i class="fa-solid fa-file-pen me-2"></i>Options Fiche de Renseignements OPT-NC</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title fw-bold text-emerald-400"><i class="fa-solid fa-file-pen me-2"></i>Fiche de Renseignements & Situation Administrative - OPT-NC</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
-            <div class="modal-body p-4 bg-slate-900/95">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label text-slate-300 fs-7 fw-medium">Civilité *</label>
+            <div class="modal-body p-4 bg-slate-900/95" style="max-height: 75vh; overflow-y: auto;">
+                <h6 class="text-cyan-400 fw-bold mb-3 border-bottom border-slate-700 pb-2"><i class="fa-solid fa-user me-2"></i>1. Votre identité</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_civilite">Civilité *</label>
                         <select id="inj_civilite" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
-                            <option value="M">M. (Monsieur)</option>
-                            <option value="MME">Mme (Madame)</option>
+                            <option value="M">M. (Monsieur)</option><option value="MME">Mme (Madame)</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label text-slate-300 fs-7 fw-medium">Nationalité Française *</label>
-                        <select id="inj_nationalite" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
-                            <option value="true">Oui</option>
-                            <option value="false">Non</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label text-slate-300 fs-7 fw-medium">Statut Professionnel *</label>
-                        <select id="inj_statut_pro" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
-                            <option value="prive">Secteur Privé / Recherche emploi</option>
-                            <option value="fct_nc">Fonctionnaire NC / Communes</option>
-                            <option value="contractuel_nc">Agent Contractuel FP de NC</option>
-                        </select>
+                    <div class="col-md-9">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_nom_prenom">Noms et prénoms *</label>
+                        <input type="text" id="inj_nom_prenom" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex. Marcel BREST">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label text-slate-300 fs-7 fw-medium">Nom et Prénoms *</label>
-                        <input type="text" id="inj_nom_prenom" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex: Japheth ROKO">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_date_naissance">Né(e) le *</label>
+                        <input type="date" id="inj_date_naissance" class="form-control bg-slate-900 text-white border-slate-700 fs-7">
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label text-slate-300 fs-7 fw-medium">Téléphone *</label>
-                        <input type="text" id="inj_telephone" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex: 77.12.34">
+                    <div class="col-md-6">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_lieu_naissance">À (lieu de naissance) *</label>
+                        <input type="text" id="inj_lieu_naissance" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex. Nouméa">
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label text-slate-300 fs-7 fw-medium">Adresse E-mail *</label>
+                    <div class="col-md-6">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_email">Adresse e-mail *</label>
                         <input type="email" id="inj_email" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="exemple@domaine.nc">
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label text-slate-300 fs-7 fw-medium">Citoyenneté Calédonienne *</label>
-                        <select id="inj_citoyen" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
-                            <option value="true">Citoyen Calédonien</option>
-                            <option value="false">Résident NC</option>
-                        </select>
+                    <div class="col-md-6">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_telephone">Téléphone *</label>
+                        <input type="tel" id="inj_telephone" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex. 77.12.34">
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label text-slate-300 fs-7 fw-medium">Années de Résidence</label>
-                        <input type="text" id="inj_annees_residence" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex: 15 ans">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label text-slate-300 fs-7 fw-medium">Reconnaissance Handicap</label>
-                        <select id="inj_handicap" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
-                            <option value="false">Non</option>
-                            <option value="true">Oui</option>
+                    <div class="col-md-6">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_nationalite">Nationalité française *</label>
+                        <select id="inj_nationalite" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
+                            <option value="true">Oui</option><option value="false">Non</option>
                         </select>
                     </div>
                 </div>
+
+                <h6 class="text-cyan-400 fw-bold mb-3 border-bottom border-slate-700 pb-2"><i class="fa-solid fa-briefcase me-2"></i>2. Je suis actuellement</h6>
+                <div class="mb-3">
+                    <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_statut_principal">Statut principal *</label>
+                    <select id="inj_statut_principal" class="form-select bg-slate-900 text-white border-slate-700 fs-7" onchange="toggleStatutPrincipal(this.value)">
+                        <option value="fct_nc_communes">Fonctionnaire ou lauréat de concours de la NC ou des communes</option>
+                        <option value="agent_non_fct">Agent non fonctionnaire de la NC ou des Communes</option>
+                    </select>
+                </div>
+
+                <div id="bloc-fct-nc" class="p-3 bg-slate-950 rounded border border-slate-700 mb-3">
+                    <div class="mb-3">
+                        <label class="form-label text-slate-300 fs-7" for="inj_fct_sous_statut">Sous-statut public *</label>
+                        <select id="inj_fct_sous_statut" class="form-select bg-slate-900 text-white border-slate-700 fs-7" onchange="toggleFctSousStatut(this.value)">
+                            <option value="fct_nc_titulaire">Fonctionnaire de Nouvelle-Calédonie - Titulaire</option>
+                            <option value="fct_nc_stagiaire">Fonctionnaire de Nouvelle-Calédonie - Stagiaire</option>
+                            <option value="fct_communal_titulaire">Fonctionnaire communal - Titulaire</option>
+                            <option value="fct_communal_stagiaire">Fonctionnaire communal - Stagiaire</option>
+                            <option value="laureat_concours">Lauréat de concours en attente de nomination</option>
+                        </select>
+                    </div>
+                    <div id="bloc-laureat-champs" class="row g-2 d-none">
+                        <div class="col-md-6">
+                            <label class="form-label text-slate-300 fs-8" for="inj_laureat_annee">Année du concours *</label>
+                            <input type="number" id="inj_laureat_annee" class="form-control bg-slate-900 text-white border-slate-700 fs-8" placeholder="Ex. 2025">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-slate-300 fs-8" for="inj_laureat_corps">Corps *</label>
+                            <input type="text" id="inj_laureat_corps" class="form-control bg-slate-900 text-white border-slate-700 fs-8" placeholder="Ex. Attaché d'administration">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="bloc-agent-non-fct" class="p-3 bg-slate-950 rounded border border-slate-700 mb-3 d-none">
+                    <div class="mb-3">
+                        <label class="form-label text-slate-300 fs-7" for="inj_non_fct_type">Précision de situation *</label>
+                        <select id="inj_non_fct_type" class="form-select bg-slate-900 text-white border-slate-700 fs-7" onchange="toggleNonFctType(this.value)">
+                            <option value="fct_metropole">Agent titulaire de la fonction publique métropolitaine</option>
+                            <option value="contractuel_nc">Agent contractuel dans la fonction publique de NC</option>
+                            <option value="prive_recherche">Employé dans le secteur privé ou en recherche d'emploi</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+                    <div id="bloc-metropole-details" class="p-2 bg-slate-900 rounded border border-slate-800 mb-2">
+                        <label class="form-label text-slate-300 fs-8" for="inj_metropole_branche">Type de fonction publique métropolitaine *</label>
+                        <select id="inj_metropole_branche" class="form-select bg-slate-900 text-white border-slate-700 fs-8 mb-2" onchange="toggleMetropoleBranche(this.value)">
+                            <option value="etat">État</option><option value="territoriale">Territoriale</option><option value="hopital">Hôpital</option>
+                        </select>
+                        <div id="bloc-metropole-categorie" class="d-none">
+                            <label class="form-label text-slate-300 fs-8" for="inj_metropole_categorie">Catégorie *</label>
+                            <input type="text" id="inj_metropole_categorie" class="form-control bg-slate-900 text-white border-slate-700 fs-8" placeholder="Ex. A, B ou C">
+                        </div>
+                    </div>
+                    <div id="bloc-employeur-champ" class="d-none">
+                        <label class="form-label text-slate-300 fs-8" id="label-employeur-libre" for="inj_employeur_libre">Employeur *</label>
+                        <input type="text" id="inj_employeur_libre" class="form-control bg-slate-900 text-white border-slate-700 fs-8" placeholder="Nom de la structure">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_filiere">Ma filière / cadre *</label>
+                        <select id="inj_filiere" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
+                            <option value="administration">Administration générale</option><option value="technique">Technique</option>
+                            <option value="opt" selected>OPT</option><option value="sante_social">Santé / Social</option>
+                            <option value="enseignement">Enseignement</option><option value="culture_sport">Culture / Jeunesse-sport / Affaires coutumières</option>
+                            <option value="incendie">Incendie</option><option value="securite">Sécurité</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_categorie">Catégorie *</label>
+                        <select id="inj_categorie" class="form-select bg-slate-900 text-white border-slate-700 fs-7"><option>A</option><option>B</option><option>C</option></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_situation_actuelle">Ma situation actuelle *</label>
+                        <select id="inj_situation_actuelle" class="form-select bg-slate-900 text-white border-slate-700 fs-7" onchange="toggleSituationActuelle(this.value)">
+                            <option value="activite">En activité</option><option value="detachement">Détachement</option>
+                            <option value="disponibilite">Disponibilité</option><option value="autre">Autre</option>
+                        </select>
+                    </div>
+                    <div id="bloc-date-fin-situation" class="col-md-6 d-none">
+                        <label class="form-label text-slate-300 fs-8" for="inj_date_fin_situation">Date de fin (détachement / disponibilité) *</label>
+                        <input type="date" id="inj_date_fin_situation" class="form-control bg-slate-900 text-white border-slate-700 fs-8">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_employeur_public_actuel">Mon employeur public actuel est</label>
+                        <input type="text" id="inj_employeur_public_actuel" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex. OPT-NC">
+                    </div>
+                </div>
+
+                <h6 class="text-cyan-400 fw-bold mb-3 border-bottom border-slate-700 pb-2"><i class="fa-solid fa-map-location-dot me-2"></i>3. Je suis</h6>
+                <div class="mb-3">
+                    <label class="form-label text-slate-300 fs-7" for="inj_statut_residence">Citoyenneté et résidence *</label>
+                    <select id="inj_statut_residence" class="form-select bg-slate-900 text-white border-slate-700 fs-7" onchange="toggleStatutResidence(this.value)">
+                        <option value="citoyen">Citoyen calédonien</option><option value="resident">Résident en Nouvelle-Calédonie</option><option value="non_resident">Non résident</option>
+                    </select>
+                </div>
+                <div id="bloc-resident-dates" class="row g-2 p-3 bg-slate-950 rounded border border-slate-700 mb-3 d-none">
+                    <div class="col-md-6">
+                        <label class="form-label text-slate-300 fs-8" for="inj_resident_depuis_date">Résident depuis le</label>
+                        <input type="date" id="inj_resident_depuis_date" class="form-control bg-slate-900 text-white border-slate-700 fs-8">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-slate-300 fs-8" for="inj_resident_annees">Soit (années)</label>
+                        <input type="number" id="inj_resident_annees" class="form-control bg-slate-900 text-white border-slate-700 fs-8" min="0" placeholder="Nombre d'années">
+                    </div>
+                </div>
+
+                <div class="p-3 bg-slate-950 rounded border border-slate-700 mb-3">
+                    <div class="mb-3">
+                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_diplome_adequation">Diplômé(e) en adéquation avec le poste</label>
+                        <input type="text" id="inj_diplome_adequation" class="form-control bg-slate-900 text-white border-slate-700 fs-7" value="Évaluation automatique par IA à partir des diplômes et du poste" readonly>
+                    </div>
+                    <label class="form-label text-slate-300 fs-7 fw-medium mb-2" for="inj_handicap">Souhaitez-vous bénéficier d'un recrutement direct au regard de votre situation de handicap ?</label>
+                    <select id="inj_handicap" class="form-select bg-slate-900 text-white border-slate-700 fs-7"><option value="false">Non</option><option value="true">Oui</option></select>
+                </div>
             </div>
             <div class="modal-footer border-top border-slate-700 bg-slate-900">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-success bg-emerald-600 border-0 text-white fw-bold" onclick="validerFicheRenseignements()">Valider & Enregistrer</button>
             </div>
         </div>
@@ -734,15 +832,68 @@
 
     // Modaux Étape 3
     function ouvrirModalFicheRenseignements() {
+        toggleStatutPrincipal(document.getElementById('inj_statut_principal').value);
+        toggleFctSousStatut(document.getElementById('inj_fct_sous_statut').value);
+        toggleNonFctType(document.getElementById('inj_non_fct_type').value);
+        toggleMetropoleBranche(document.getElementById('inj_metropole_branche').value);
+        toggleSituationActuelle(document.getElementById('inj_situation_actuelle').value);
+        toggleStatutResidence(document.getElementById('inj_statut_residence').value);
         new bootstrap.Modal(document.getElementById('modalFicheRenseignements')).show();
     }
 
+    function toggleStatutPrincipal(value) {
+        document.getElementById('bloc-fct-nc').classList.toggle('d-none', value !== 'fct_nc_communes');
+        document.getElementById('bloc-agent-non-fct').classList.toggle('d-none', value !== 'agent_non_fct');
+    }
+
+    function toggleFctSousStatut(value) {
+        document.getElementById('bloc-laureat-champs').classList.toggle('d-none', value !== 'laureat_concours');
+    }
+
+    function toggleNonFctType(value) {
+        const blocMetropole = document.getElementById('bloc-metropole-details');
+        const blocEmployeur = document.getElementById('bloc-employeur-champ');
+        const labelEmployeur = document.getElementById('label-employeur-libre');
+        const showMetropole = value === 'fct_metropole';
+        const showEmployeur = value === 'contractuel_nc' || value === 'autre';
+
+        blocMetropole.classList.toggle('d-none', !showMetropole);
+        blocEmployeur.classList.toggle('d-none', !showEmployeur);
+        if (showEmployeur) {
+            labelEmployeur.textContent = value === 'contractuel_nc' ? 'Employeur (fonction publique NC) *' : 'Précision *';
+        }
+        toggleMetropoleBranche(document.getElementById('inj_metropole_branche').value);
+    }
+
+    function toggleMetropoleBranche(value) {
+        document.getElementById('bloc-metropole-categorie').classList.toggle('d-none', value !== 'hopital');
+    }
+
+    function toggleSituationActuelle(value) {
+        document.getElementById('bloc-date-fin-situation').classList.toggle('d-none', !['detachement', 'disponibilite'].includes(value));
+    }
+
+    function toggleStatutResidence(value) {
+        document.getElementById('bloc-resident-dates').classList.toggle('d-none', value !== 'resident');
+    }
+
     function validerFicheRenseignements() {
+        const nom = document.getElementById('inj_nom_prenom').value.trim();
+        if (!nom) {
+            alert('Veuillez remplir votre Nom et Prénom.');
+            document.getElementById('inj_nom_prenom').focus();
+            return;
+        }
+
         const badge = document.getElementById('badge-status-fiche');
-        badge.className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
-        badge.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Prêt & Rempli`;
-       
-        bootstrap.Modal.getInstance(document.getElementById('modalFicheRenseignements')).hide();
+        if (badge) {
+            badge.className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
+            badge.innerHTML = '<i class="fa-solid fa-circle-check me-1"></i>Complété';
+        }
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalFicheRenseignements'));
+        if (modal) modal.hide();
+        alert('La fiche de renseignements a été mise à jour et enregistrée avec succès !');
     }
 
     function ouvrirModalAttestation() {
@@ -941,22 +1092,55 @@
         btn.disabled = true;
         btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i>Génération des Assets en cours...`;
 
+        const valeur = id => document.getElementById(id)?.value || "";
+        const statutPrincipal = valeur('inj_statut_principal');
+        const statutFonctionnaire = valeur('inj_fct_sous_statut');
+        const statutNonFonctionnaire = valeur('inj_non_fct_type');
+        const statutPro = statutPrincipal === 'fct_nc_communes'
+            ? 'fct_nc'
+            : statutNonFonctionnaire === 'prive_recherche'
+                ? 'prive'
+                : statutNonFonctionnaire === 'contractuel_nc'
+                    ? 'contractuel_nc'
+                    : 'autre';
+
         const choixUtilisateur = {
-            civilite: document.getElementById('inj_civilite').value,
-            nationalite_francaise: document.getElementById('inj_nationalite').value === "true",
-            statut_pro: document.getElementById('inj_statut_pro').value,
-            citoyen_caledonien: document.getElementById('inj_citoyen').value === "true",
-            handicap: document.getElementById('inj_handicap').value === "true",
-            lieu_signature: document.getElementById('inj_lieu_signature').value || "Nouméa",
-            poste_intitule: posteCibleActuel || "Poste OPT-NC"
+            civilite: valeur('inj_civilite'),
+            nationalite_francaise: valeur('inj_nationalite') === "true",
+            statut_pro: statutPro,
+            citoyen_caledonien: valeur('inj_statut_residence') === "citoyen",
+            handicap: valeur('inj_handicap') === "true",
+            lieu_signature: valeur('inj_lieu_signature') || "Nouméa",
+            poste_intitule: posteCibleActuel || "Poste OPT-NC",
+            situation_administrative: {
+                statut_principal: statutPrincipal,
+                sous_statut: statutFonctionnaire,
+                annee_concours: valeur('inj_laureat_annee'),
+                corps_concours: valeur('inj_laureat_corps'),
+                type_non_fonctionnaire: statutNonFonctionnaire,
+                branche_metropole: valeur('inj_metropole_branche'),
+                categorie_metropole: valeur('inj_metropole_categorie'),
+                employeur: valeur('inj_employeur_libre'),
+                filiere: valeur('inj_filiere'),
+                categorie: valeur('inj_categorie'),
+                situation_actuelle: valeur('inj_situation_actuelle'),
+                date_fin_situation: valeur('inj_date_fin_situation'),
+                employeur_public_actuel: valeur('inj_employeur_public_actuel'),
+                statut_residence: valeur('inj_statut_residence'),
+                date_residence: valeur('inj_resident_depuis_date'),
+                annees_residence: valeur('inj_resident_annees')
+            }
         };
 
         const donneesCandidat = {
-            nom_prenom: document.getElementById('inj_nom_prenom').value || "Candidat NC",
-            telephone: document.getElementById('inj_telephone').value || "",
-            email: document.getElementById('inj_email').value || "",
-            annees_residence: document.getElementById('inj_annees_residence').value || "",
-            diplomes: "Diplômes en adéquation"
+            nom_prenom: valeur('inj_nom_prenom') || "Candidat NC",
+            telephone: valeur('inj_telephone'),
+            email: valeur('inj_email'),
+            date_naissance: valeur('inj_date_naissance'),
+            lieu_naissance: valeur('inj_lieu_naissance'),
+            date_residence: valeur('inj_resident_depuis_date'),
+            annees_residence: valeur('inj_resident_annees'),
+            diplomes: valeur('inj_diplome_adequation') || "Évaluation des diplômes par IA"
         };
 
         if (donneesCandidat.email) {

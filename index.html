@@ -179,6 +179,8 @@
         .modal-body .text-slate-300, .modal-body .text-slate-200 { color: #405b5b !important; }
         .modal-body .text-cyan-300 { color: var(--sea) !important; }
         .modal-backdrop.show { opacity: .45; }
+        .fiche-open-trigger { display: inline-flex; align-items: center; gap: 5px; padding: 0; color: var(--sea); border: 0; background: transparent; font-weight: 700; text-align: left; cursor: pointer; }
+        .fiche-open-trigger:hover { color: var(--forest); text-decoration: underline; }
         .matching-source-heading, .matching-source-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
         .matching-source-heading h3 { margin: 0; color: var(--ink); font-size: 16px; font-weight: 700; }
         .matching-source-heading p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
@@ -430,7 +432,7 @@
                             </div>
                             <div id="asset-fiche-pdf" class="text-slate-300 fs-7">
                                 <p class="mb-2">Document officiel DRH OPT-NC.</p>
-                                <span class="text-cyan-400 fw-semibold fs-7"><i class="fa-solid fa-sliders me-1"></i> Cliquer pour compléter les informations légales</span>
+                                <button type="button" id="btn-open-fiche" class="fiche-open-trigger fs-7" aria-haspopup="dialog" aria-controls="modalFicheRenseignements"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Cliquer pour compléter les informations légales</button>
                             </div>
                         </div>
                     </div>
@@ -838,8 +840,13 @@
         toggleMetropoleBranche(document.getElementById('inj_metropole_branche').value);
         toggleSituationActuelle(document.getElementById('inj_situation_actuelle').value);
         toggleStatutResidence(document.getElementById('inj_statut_residence').value);
-        new bootstrap.Modal(document.getElementById('modalFicheRenseignements')).show();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalFicheRenseignements')).show();
     }
+
+    document.getElementById('btn-open-fiche').addEventListener('click', event => {
+        event.stopPropagation();
+        ouvrirModalFicheRenseignements();
+    });
 
     function toggleStatutPrincipal(value) {
         document.getElementById('bloc-fct-nc').classList.toggle('d-none', value !== 'fct_nc_communes');

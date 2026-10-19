@@ -601,6 +601,36 @@
                             <input type="text" id="inj_laureat_corps" class="form-control bg-slate-900 text-white border-slate-700 fs-8" placeholder="Ex. Attaché d'administration">
                         </div>
                     </div>
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-6">
+                            <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_filiere">Ma filière / cadre *</label>
+                            <select id="inj_filiere" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
+                                <option value="administration">Administration générale</option><option value="technique">Technique</option>
+                                <option value="opt" selected>OPT</option><option value="sante_social">Santé / Social</option>
+                                <option value="enseignement">Enseignement</option><option value="culture_sport">Culture / Jeunesse-sport / Affaires coutumières</option>
+                                <option value="incendie">Incendie</option><option value="securite">Sécurité</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_categorie">Catégorie *</label>
+                            <select id="inj_categorie" class="form-select bg-slate-900 text-white border-slate-700 fs-7"><option>A</option><option>B</option><option>C</option></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_situation_actuelle">Ma situation actuelle *</label>
+                            <select id="inj_situation_actuelle" class="form-select bg-slate-900 text-white border-slate-700 fs-7" onchange="toggleSituationActuelle(this.value)">
+                                <option value="activite">En activité</option><option value="detachement">Détachement</option>
+                                <option value="disponibilite">Disponibilité</option><option value="autre">Autre</option>
+                            </select>
+                        </div>
+                        <div id="bloc-date-fin-situation" class="col-md-6 d-none">
+                            <label class="form-label text-slate-300 fs-8" for="inj_date_fin_situation">Date de fin (détachement / disponibilité) *</label>
+                            <input type="date" id="inj_date_fin_situation" class="form-control bg-slate-900 text-white border-slate-700 fs-8">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_employeur_public_actuel">Mon employeur public actuel est *</label>
+                            <input type="text" id="inj_employeur_public_actuel" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex. OPT-NC">
+                        </div>
+                    </div>
                 </div>
 
                 <div id="bloc-agent-non-fct" class="p-3 bg-slate-950 rounded border border-slate-700 mb-3 d-none">
@@ -626,37 +656,6 @@
                     <div id="bloc-employeur-champ" class="d-none">
                         <label class="form-label text-slate-300 fs-8" id="label-employeur-libre" for="inj_employeur_libre">Employeur *</label>
                         <input type="text" id="inj_employeur_libre" class="form-control bg-slate-900 text-white border-slate-700 fs-8" placeholder="Nom de la structure">
-                    </div>
-                </div>
-
-                <div class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_filiere">Ma filière / cadre *</label>
-                        <select id="inj_filiere" class="form-select bg-slate-900 text-white border-slate-700 fs-7">
-                            <option value="administration">Administration générale</option><option value="technique">Technique</option>
-                            <option value="opt" selected>OPT</option><option value="sante_social">Santé / Social</option>
-                            <option value="enseignement">Enseignement</option><option value="culture_sport">Culture / Jeunesse-sport / Affaires coutumières</option>
-                            <option value="incendie">Incendie</option><option value="securite">Sécurité</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_categorie">Catégorie *</label>
-                        <select id="inj_categorie" class="form-select bg-slate-900 text-white border-slate-700 fs-7"><option>A</option><option>B</option><option>C</option></select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_situation_actuelle">Ma situation actuelle *</label>
-                        <select id="inj_situation_actuelle" class="form-select bg-slate-900 text-white border-slate-700 fs-7" onchange="toggleSituationActuelle(this.value)">
-                            <option value="activite">En activité</option><option value="detachement">Détachement</option>
-                            <option value="disponibilite">Disponibilité</option><option value="autre">Autre</option>
-                        </select>
-                    </div>
-                    <div id="bloc-date-fin-situation" class="col-md-6 d-none">
-                        <label class="form-label text-slate-300 fs-8" for="inj_date_fin_situation">Date de fin (détachement / disponibilité) *</label>
-                        <input type="date" id="inj_date_fin_situation" class="form-control bg-slate-900 text-white border-slate-700 fs-8">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label text-slate-300 fs-7 fw-medium" for="inj_employeur_public_actuel">Mon employeur public actuel est</label>
-                        <input type="text" id="inj_employeur_public_actuel" class="form-control bg-slate-900 text-white border-slate-700 fs-7" placeholder="Ex. OPT-NC">
                     </div>
                 </div>
 

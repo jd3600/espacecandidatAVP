@@ -188,9 +188,22 @@
 
             <!-- ================= ÉTAPE 2 : POSTES PROPICES ================= -->
             <div id="step-content-2" class="step-content d-none">
-                <div class="mb-4">
-                    <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-sliders me-2"></i>Étape 2 : Postes AVP Recommandés par l'IA</h2>
-                    <p class="text-slate-400">Sélectionnés dynamiquement depuis le catalogue Apigee de l'OPT-NC. Cliquez sur une carte pour ouvrir les détails.</p>
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 pb-3 border-bottom border-slate-700 gap-3">
+                    <div>
+                        <h2 class="h3 fw-bold text-cyan-400 mb-1"><i class="fa-solid fa-sliders me-2"></i>Étape 2 : Postes Recommandés par l'IA</h2>
+                        <p class="text-slate-400 mb-0">Sélectionnés dynamiquement depuis l'API Apigee de l'OPT-NC.</p>
+                    </div>
+                    <!-- SÉLECTEUR DE SOURCE DE MATCHING (METIERS VS AVPS) -->
+                    <div class="bg-slate-900 p-2 rounded-xl border border-slate-700 d-flex align-items-center gap-2">
+                        <span class="text-slate-400 fs-7 ms-2 fw-medium"><i class="fa-solid fa-database text-cyan-400 me-1"></i> Source :</span>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <input type="radio" class="btn-check" name="sourceMatchingRadio" id="sourceAvps" value="avps" checked onchange="changerSourceMatching('avps')">
+                            <label class="btn btn-outline-cyan px-3" for="sourceAvps">AVP Ouverts</label>
+
+                            <input type="radio" class="btn-check" name="sourceMatchingRadio" id="sourceMetiers" value="metiers" onchange="changerSourceMatching('metiers')">
+                            <label class="btn btn-outline-cyan px-3" for="sourceMetiers">Référentiel Métiers</label>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row g-3 mb-4" id="dynamic-avp-results-container">
@@ -321,7 +334,7 @@
             <div id="step-content-4" class="step-content d-none">
                 <div class="mb-4">
                     <h2 class="h3 fw-bold text-cyan-400 mb-2"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Étape 4 : Soumission & Archivage Cloud</h2>
-                    <p class="text-slate-400">Validation et enregistrement sécurisé dans Firestore et Google Cloud Storage.</p>
+                    <p class="text-slate-400">Validation et enregistrement sécurisé dans Firestore et Google Cloud Storage, ou téléchargement direct du dossier en PDF.</p>
                 </div>
 
                 <div class="ai-card p-4 mb-4 border border-cyan-500/30">
@@ -335,9 +348,19 @@
                         <input type="text" id="final_avp_cible" class="form-control bg-slate-900 text-white border-slate-700" value="Non défini" readonly>
                     </div>
 
-                    <button class="btn btn-success bg-emerald-600 border-0 w-100 py-3 fw-bold fs-6 shadow" onclick="soumettreToutAuCloud()">
-                        <i class="fa-solid fa-paper-plane me-2"></i>Envoyer le Dossier Candidat
-                    </button>
+                    <!-- BOUTON DE TÉLÉCHARGEMENT DIRECT EN PDF (NOUVEAUTÉ) -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <button class="btn btn-outline-cyan border-cyan-500 text-cyan-400 w-100 py-3 fw-bold fs-6" onclick="telechargerDossierPdf()">
+                                <i class="fa-solid fa-file-arrow-down me-2"></i>Télécharger mon Dossier (PDF)
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-success bg-emerald-600 border-0 w-100 py-3 fw-bold fs-6 shadow" onclick="soumettreToutAuCloud()">
+                                <i class="fa-solid fa-paper-plane me-2"></i>Envoyer le Dossier au Cloud
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="final-status-box" class="d-none p-4 rounded-3 bg-emerald-950/40 border border-emerald-500/30 text-emerald-300"></div>
@@ -466,6 +489,7 @@
     let selectedDiplomesFiles = [];
     let postesPropicesGlobal = [];
     let posteCibleActuel = "";
+    let sourceMatchingActuelle = "avps"; // "avps" ou "metiers"
 
     function switchStep(step) {
         for (let i = 1; i <= 4; i++) {
@@ -565,226 +589,286 @@
         renderDiplomesFilesList();
     }
 
-    // Modaux Étape 3
+    // Changement de la source de matching (Métiers vs AVP)
+    function changerSourceMatching(source) {
+        sourceMatchingActuelle = source;
+        if (profilStructureGlobal) {
+            lancerMatchingExplicable();
+        }
+    }
+
+    // Lancement Ingestion Étape 1 & Passage étape 2
+    async function lancerIngestionEtMatching() {
+        const descBrute = document.getElementById('profil_brut').value;
+        const formData = new FormData();
+
+        if (selectedFiles.length > 0) {
+            selectedFiles.forEach(f => formData.append('files', f));
+        } else if (descBrute.trim() !== "") {
+            formData.append('description_brute', descBrute);
+        } else {
+            alert("Veuillez sélectionner au moins un fichier PDF ou saisir un profil textuel.");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_BASE}/api/candidat/ingestion`, { method: 'POST', body: formData });
+            const data = await res.json();
+            if (res.ok) {
+                profilStructureGlobal = data.resultat;
+                document.getElementById('ingestion-success-badge').classList.remove('d-none');
+                setTimeout(() => {
+                    switchStep(2);
+                    lancerMatchingExplicable();
+                }, 1000);
+            } else {
+                alert("Erreur d'ingestion : " + (data.detail || "Erreur inconnue"));
+            }
+        } catch (e) {
+            alert("Erreur réseau : " + e.message);
+        }
+    }
+
+    async function lancerMatchingExplicable() {
+        const container = document.getElementById('dynamic-avp-results-container');
+        container.innerHTML = `<div class="col-12 text-center text-cyan-400 py-5"><i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i><p>Analyse et croisement en cours (${sourceMatchingActuelle === 'avps' ? 'AVP Ouverts' : 'Référentiel Métiers'})...</p></div>`;
+
+        try {
+            const res = await fetch(`${API_BASE}/api/candidat/matching`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ profil_structurer: profilStructureGlobal, source_matching: sourceMatchingActuelle })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                postesPropicesGlobal = data.resultat.postes_propices || [];
+                renderPostesPropices();
+            } else {
+                container.innerHTML = `<div class="col-12 text-center text-red-400 py-4">Erreur : ${data.detail || 'Inconnue'}</div>`;
+            }
+        } catch (e) {
+            container.innerHTML = `<div class="col-12 text-center text-red-400 py-4">Erreur réseau : ${e.message}</div>`;
+        }
+    }
+
+    function renderPostesPropices() {
+        const container = document.getElementById('dynamic-avp-results-container');
+        container.innerHTML = '';
+
+        if (postesPropicesGlobal.length === 0) {
+            container.innerHTML = `<div class="col-12 text-center text-slate-400 py-4">Aucun poste trouvé pour cette source.</div>`;
+            return;
+        }
+
+        postesPropicesGlobal.forEach((poste, index) => {
+            container.innerHTML += `
+                <div class="col-md-6">
+                    <div class="ai-card avp-card p-4 h-100 border border-slate-700 d-flex flex-column justify-content-between" onclick="ouvrirModalDetailPoste(${index})">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-slate-800 text-cyan-300 border border-cyan-500/30 font-monospace">${poste.id_avp || poste.code_metier || 'POSTE-OPT'}</span>
+                                <span class="badge bg-cyan-500/20 text-cyan-400 border border-cyan-500/40">Adéquation : ${poste.score || '85'}%</span>
+                            </div>
+                            <h5 class="fw-bold text-white mb-2">${poste.intitule || poste.libelle}</h5>
+                            <p class="text-slate-400 fs-7 mb-3">${poste.justification_courte || 'Poste adapté au profil candidat.'}</p>
+                        </div>
+                        <div class="text-end">
+                            <span class="text-cyan-400 fs-7 fw-semibold"><i class="fa-solid fa-eye me-1"></i> Voir l'analyse explicable</span>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    }
+
+    let posteSelectionneModal = null;
+    function ouvrirModalDetailPoste(index) {
+        posteSelectionneModal = postesPropicesGlobal[index];
+        document.getElementById('modal-title').innerText = posteSelectionneModal.intitule || posteSelectionneModal.libelle;
+        
+        const bodyContent = document.getElementById('modal-body-content');
+        bodyContent.innerHTML = `
+            <div class="mb-3">
+                <strong class="text-cyan-400 d-block mb-1">ID / Code Poste :</strong>
+                <span class="text-white font-monospace">${posteSelectionneModal.id_avp || posteSelectionneModal.code_metier}</span>
+            </div>
+            <div class="mb-3">
+                <strong class="text-cyan-400 d-block mb-1">Justification & Analyse Explicable :</strong>
+                <p class="text-slate-300 fs-7">${posteSelectionneModal.justification_courte || 'Correspondance validée par l\'IA.'}</p>
+            </div>
+        `;
+        new bootstrap.Modal(document.getElementById('avpDetailModal')).show();
+    }
+
+    function fermerModalEtPasserStep3() {
+        if (posteSelectionneModal) {
+            posteCibleActuel = posteSelectionneModal.intitule || posteSelectionneModal.libelle || "Poste OPT-NC";
+            document.getElementById('final_avp_cible').value = posteCibleActuel;
+        }
+        const modalEl = document.getElementById('avpDetailModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+        if (modalInstance) modalInstance.hide();
+        switchStep(3);
+    }
+
+    // Gestion des Modals de Saisie Fiche & Attestation
     function ouvrirModalFicheRenseignements() {
         new bootstrap.Modal(document.getElementById('modalFicheRenseignements')).show();
     }
-
     function validerFicheRenseignements() {
-        const badge = document.getElementById('badge-status-fiche');
-        badge.className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
-        badge.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Prêt & Rempli`;
-        
+        document.getElementById('badge-status-fiche').className = "badge bg-success/20 text-success border border-success/40 px-3 py-1 fs-7";
+        document.getElementById('badge-status-fiche').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Complété`;
         bootstrap.Modal.getInstance(document.getElementById('modalFicheRenseignements')).hide();
     }
 
     function ouvrirModalAttestation() {
         new bootstrap.Modal(document.getElementById('modalAttestation')).show();
     }
-
     function validerAttestation() {
-        const badge = document.getElementById('badge-status-attestation');
-        badge.className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
-        badge.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Prêt & Signé`;
-        
+        document.getElementById('badge-status-attestation').className = "badge bg-success/20 text-success border border-success/40 px-3 py-1 fs-7";
+        document.getElementById('badge-status-attestation').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Signé`;
         bootstrap.Modal.getInstance(document.getElementById('modalAttestation')).hide();
     }
 
-    // Ingestion & Matching automatique
-    async function lancerIngestionEtMatching() {
-        const texte = document.getElementById('profil_brut').value;
-        if (selectedFiles.length === 0 && !texte) {
-            alert("Veuillez déposer un fichier PDF ou saisir un profil.");
-            return;
-        }
-
-        const formData = new FormData();
-        if (selectedFiles.length > 0) {
-            selectedFiles.forEach(f => formData.append("files", f));
-        }
-        if (texte) {
-            formData.append("description_brute", texte);
-        }
-
-        try {
-            const res1 = await fetch(`${API_BASE}/api/candidat/ingestion`, {
-                method: 'POST',
-                body: formData
-            });
-            const data1 = await res1.json();
-            profilStructureGlobal = data1.resultat;
-
-            document.getElementById('ingestion-success-badge').classList.remove('d-none');
-
-            const container2 = document.getElementById('dynamic-avp-results-container');
-            container2.innerHTML = `<div class="col-12 text-center text-cyan-400 py-5"><i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i><p>Croisement en cours avec l'API Apigee de l'OPT-NC...</p></div>`;
-
-            const res2 = await fetch(`${API_BASE}/api/candidat/matching`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    profil_structurer: profilStructureGlobal
-                })
-            });
-            const data2 = await res2.json();
-            let resObj = data2.resultat;
-
-            if (typeof resObj === 'string') {
-                try { resObj = JSON.parse(resObj); } catch(e) {}
-            }
-
-            postesPropicesGlobal = resObj.postes_propices || [];
-            afficherPostesPropicesDynamiques(postesPropicesGlobal);
-
-            setTimeout(() => {
-                switchStep(2);
-            }, 800);
-
-        } catch (e) {
-            alert("Erreur lors de l'ingestion ou du matching : " + e.message);
-        }
-    }
-
-    function afficherPostesPropicesDynamiques(postes) {
-        const container = document.getElementById('dynamic-avp-results-container');
-        container.innerHTML = '';
-
-        if (!postes || postes.length === 0) {
-            container.innerHTML = `<div class="col-12 text-center text-amber-400 py-4">Aucun poste propice trouvé pour ce profil.</div>`;
-            return;
-        }
-
-        postes.forEach((p, idx) => {
-            let fiche = p.fiche_explicable || p;
-            container.innerHTML += `
-                <div class="col-md-6 col-lg-4">
-                    <div class="ai-card p-4 h-100 avp-card border border-cyan-500/40 rounded-3 shadow-sm" onclick="ouvrirModalDetailPropice(${idx})">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="badge bg-cyan-500/20 text-cyan-400 border border-cyan-500/40">${p.code_avp || 'AVP-OPT'}</span>
-                            <span class="fw-bold text-emerald-400 fs-5">${p.score_matching || '80%'}</span>
-                        </div>
-                        <h5 class="fw-bold text-white mb-2">${p.intitule}</h5>
-                        <p class="text-slate-400 fs-7 mb-3">${fiche.pourquoi_ce_rapprochement || p.explication || 'Poste adapté au profil.'}</p>
-                        <div class="text-cyan-400 fs-7 fw-semibold"><i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Ouvrir l'analyse détaillée (Pop-up)</div>
-                    </div>
-                </div>`;
-        });
-    }
-
-    function ouvrirModalDetailPropice(idx) {
-        const p = postesPropicesGlobal[idx];
-        let fiche = p.fiche_explicable || p;
-        posteCibleActuel = p.intitule;
-        document.getElementById('final_avp_cible').value = p.intitule;
-
-        document.getElementById('modal-title').innerHTML = `<i class="fa-solid fa-briefcase me-2"></i>Offre : ${p.intitule}`;
-        document.getElementById('modal-body-content').innerHTML = `
-            <div class="d-flex align-items-center justify-content-between p-3 mb-3 bg-slate-950 rounded border border-cyan-500/30">
-                <div>
-                    <span class="text-slate-400 fs-7 d-block">Score d'Adéquation Globale</span>
-                    <h3 class="fw-bold text-cyan-400 mb-0">${p.score_matching || '85%'}</h3>
-                </div>
-                <span class="badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-2 fs-7">Recommandé par le Copilote</span>
-            </div>
-
-            <div class="space-y-3 fs-7 text-slate-300">
-                <div>
-                    <strong class="text-cyan-300 d-block mb-1"><i class="fa-solid fa-lightbulb me-1"></i> Pourquoi ce rapprochement :</strong>
-                    <p class="mb-0 bg-slate-950/60 p-2.5 rounded">${fiche.pourquoi_ce_rapprochement || p.explication || 'Correspondance validée.'}</p>
-                </div>
-                <div>
-                    <strong class="text-emerald-400 d-block mb-1"><i class="fa-solid fa-circle-check me-1"></i> Points Forts :</strong>
-                    <p class="mb-0 bg-slate-950/60 p-2.5 rounded">${fiche.points_forts || 'Compétences alignées avec les attendus.'}</p>
-                </div>
-                <div>
-                    <strong class="text-amber-400 d-block mb-1"><i class="fa-solid fa-triangle-exclamation me-1"></i> Écarts / Axes de Progression :</strong>
-                    <p class="mb-0 bg-slate-950/60 p-2.5 rounded">${fiche.ecarts_a_combler || 'Aucun écart majeur.'}</p>
-                </div>
-            </div>`;
-
-        new bootstrap.Modal(document.getElementById('avpDetailModal')).show();
-    }
-
-    function fermerModalEtPasserStep3() {
-        const modalEl = bootstrap.Modal.getInstance(document.getElementById('avpDetailModal'));
-        if (modalEl) modalEl.hide();
-        switchStep(3);
-    }
-
-    // Génération des Assets & Fichiers PDF (Étape 3)
+    // Génération des Assets (Étape 3)
     async function genererAssets() {
+        if (!profilStructureGlobal) {
+            alert("Veuillez d'abord ingérer un profil à l'étape 1.");
+            switchStep(1);
+            return;
+        }
+
         const btn = document.getElementById('btn-generer-assets');
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i>Génération des Assets Gemini en cours...`;
         btn.disabled = true;
-        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i>Génération des Assets en cours...`;
 
         const choixUtilisateur = {
             civilite: document.getElementById('inj_civilite').value,
-            nationalite_francaise: document.getElementById('inj_nationalite').value === "true",
+            nationalite: document.getElementById('inj_nationalite').value,
             statut_pro: document.getElementById('inj_statut_pro').value,
-            citoyen_caledonien: document.getElementById('inj_citoyen').value === "true",
-            handicap: document.getElementById('inj_handicap').value === "true",
-            lieu_signature: document.getElementById('inj_lieu_signature').value || "Nouméa",
-            poste_intitule: posteCibleActuel || "Poste OPT-NC"
+            citoyen: document.getElementById('inj_citoyen').value,
+            annees_residence: document.getElementById('inj_annees_residence').value,
+            handicap: document.getElementById('inj_handicap').value,
+            lieu_signature: document.getElementById('inj_lieu_signature').value
         };
 
-        const donneesCandidat = {
-            nom_prenom: document.getElementById('inj_nom_prenom').value || "Candidat NC",
-            telephone: document.getElementById('inj_telephone').value || "",
-            email: document.getElementById('inj_email').value || "",
-            annees_residence: document.getElementById('inj_annees_residence').value || "",
-            diplomes: "Diplômes en adéquation"
+        const donneesRaw = {
+            nom: document.getElementById('inj_nom_prenom').value || "Candidat OPT",
+            telephone: document.getElementById('inj_telephone').value || "77.00.00",
+            email: document.getElementById('candidat_email').value || "candidat@opt.nc"
         };
-
-        if (donneesCandidat.email) {
-            document.getElementById('candidat_email').value = donneesCandidat.email;
-        }
 
         try {
             const res = await fetch(`${API_BASE}/api/candidat/assets`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    profil_structurer: JSON.stringify(profilStructureGlobal || "Profil Standard"),
-                    id_avp_cible: posteCibleActuel || "Poste OPT-NC",
+                    profil_structurer: profilStructureGlobal,
+                    id_avp_cible: posteCibleActuel || "Poste Standard OPT-NC",
                     choix_utilisateur: choixUtilisateur,
-                    donnees_candidat_raw: donneesCandidat
+                    donnees_candidat_raw: donneesRaw
                 })
             });
-
             const data = await res.json();
-            const assets = data.resultat;
+            if (res.ok) {
+                const resAssets = data.resultat.assets_genere;
+                document.getElementById('asset-cv').innerText = resAssets.cv_opt || "CV généré.";
+                document.getElementById('badge-status-cv').className = "badge bg-success/20 text-success border border-success/40 px-3 py-1 fs-7";
+                document.getElementById('badge-status-cv').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Généré`;
 
-            // Remplissage texte des assets
-            document.getElementById('asset-cv').innerHTML = `<p class="mb-0 text-slate-200">${assets.cv_oriente || "CV structuré généré avec succès."}</p>`;
-            document.getElementById('asset-lettre').innerHTML = `<p class="mb-0 text-slate-200">${assets.lettre_motivation || "Lettre de motivation générée."}</p>`;
+                document.getElementById('asset-lettre').innerText = resAssets.lettre_motivation || "Lettre générée.";
+                document.getElementById('badge-status-lettre').className = "badge bg-success/20 text-success border border-success/40 px-3 py-1 fs-7";
+                document.getElementById('badge-status-lettre').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Généré`;
 
-            // Virer les badges au vert
-            document.getElementById('badge-status-cv').className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
-            document.getElementById('badge-status-cv').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Prêt & Généré`;
-
-            document.getElementById('badge-status-lettre').className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
-            document.getElementById('badge-status-lettre').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>Prêt & Rédigé`;
-
-            document.getElementById('badge-status-fiche').className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
-            document.getElementById('badge-status-fiche').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>PDF Fusionné`;
-
-            document.getElementById('badge-status-attestation').className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";
-            document.getElementById('badge-status-attestation').innerHTML = `<i class="fa-solid fa-circle-check me-1"></i>PDF Fusionné`;
-
+                alert("Assets et documents PDF officiels générés avec succès !");
+            } else {
+                alert("Erreur lors de la génération : " + (data.detail || "Inconnue"));
+            }
         } catch (e) {
-            alert("Erreur Génération Assets : " + e.message);
+            alert("Erreur réseau : " + e.message);
         } finally {
-            btn.disabled = false;
             btn.innerHTML = `<i class="fa-solid fa-gears me-2"></i>Lancer la Génération des Assets & PDF`;
+            btn.disabled = false;
         }
     }
 
-    // Soumission Cloud (Étape 4)
+    // Téléchargement du dossier en PDF (Étape 4)
+    async function telechargerDossierPdf() {
+        const email = document.getElementById('candidat_email').value;
+        if (!email) {
+            alert("Veuillez renseigner votre adresse e-mail à l'Étape 4.");
+            return;
+        }
+
+        const choixUtilisateur = {
+            civilite: document.getElementById('inj_civilite').value,
+            nationalite: document.getElementById('inj_nationalite').value,
+            statut_pro: document.getElementById('inj_statut_pro').value,
+            citoyen: document.getElementById('inj_citoyen').value,
+            lieu_signature: document.getElementById('inj_lieu_signature').value
+        };
+
+        const donneesRaw = {
+            nom: document.getElementById('inj_nom_prenom').value || "Candidat",
+            email: email,
+            telephone: document.getElementById('inj_telephone').value || "77.00.00"
+        };
+
+        try {
+            const res = await fetch(`${API_BASE}/api/candidat/telecharger-pdf`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    profil_structurer: profilStructureGlobal || {},
+                    id_avp_cible: posteCibleActuel || "Poste Standard",
+                    choix_utilisateur: choixUtilisateur,
+                    donnees_candidat_raw: donneesRaw
+                })
+            });
+
+            if (res.ok) {
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Dossier_Candidature_${donneesRaw.nom.replace(' ', '_')}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } else {
+                const data = await res.json();
+                alert("Erreur de téléchargement PDF : " + (data.detail || "Inconnue"));
+            }
+        } catch (e) {
+            alert("Erreur réseau : " + e.message);
+        }
+    }
+
+    // Soumission Cloud Finale (Étape 4)
     async function soumettreToutAuCloud() {
         const email = document.getElementById('candidat_email').value;
-        const avp = document.getElementById('final_avp_cible').value;
+        if (!email) {
+            alert("Veuillez renseigner votre adresse e-mail.");
+            return;
+        }
 
-        if (!email) { alert("Veuillez entrer une adresse e-mail valide."); return; }
+        const choixUtilisateur = {
+            civilite: document.getElementById('inj_civilite').value,
+            nationalite: document.getElementById('inj_nationalite').value,
+            statut_pro: document.getElementById('inj_statut_pro').value,
+            citoyen: document.getElementById('inj_citoyen').value,
+            lieu_signature: document.getElementById('inj_lieu_signature').value
+        };
+
+        const donneesRaw = {
+            nom: document.getElementById('inj_nom_prenom').value || "Candidat",
+            email: email,
+            telephone: document.getElementById('inj_telephone').value || "77.00.00"
+        };
+
+        const statusBox = document.getElementById('final-status-box');
+        statusBox.classList.remove('d-none');
+        statusBox.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i>Soumission et double archivage Cloud (Firestore & GCS) en cours...`;
 
         try {
             const res = await fetch(`${API_BASE}/api/candidat/postuler`, {
@@ -792,21 +876,26 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: email,
-                    profil_structurer: profilStructureGlobal || "Profil Standard",
-                    id_avp_cible: avp
+                    profil_structurer: profilStructureGlobal || {},
+                    id_avp_cible: posteCibleActuel || "Poste Standard",
+                    choix_utilisateur: choixUtilisateur,
+                    donnees_candidat_raw: donneesRaw
                 })
             });
             const data = await res.json();
-            const box = document.getElementById('final-status-box');
-            box.classList.remove('d-none');
-            box.innerHTML = `
-                <h5 class="fw-bold"><i class="fa-solid fa-circle-check me-2"></i>Dossier Enregistré avec Succès !</h5>
-                <p class="mb-1">E-mail Candidat : <strong>${email}</strong></p>
-                <p class="mb-1">ID Candidature : <code>${data.stockage.candidature_id}</code></p>
-                <small class="text-slate-400">Archivé sur le bucket GCS et indexé dans Firestore.</small>
-            `;
+            if (res.ok) {
+                statusBox.innerHTML = `
+                    <h5 class="fw-bold mb-2"><i class="fa-solid fa-circle-check text-emerald-400 me-2"></i>Candidature Soumise avec Succès !</h5>
+                    <p class="mb-1">Votre dossier a été archivé dans Firestore et sur Google Cloud Storage.</p>
+                    <small class="text-slate-400">ID Candidat / Référence GCS : ${data.stockage?.candidature_id || 'Enregistré'}</small>
+                `;
+            } else {
+                statusBox.className = "p-4 rounded-3 bg-red-950/40 border border-red-500/30 text-red-300";
+                statusBox.innerHTML = `Erreur lors de la soumission : ${data.detail || 'Inconnue'}`;
+            }
         } catch (e) {
-            alert("Erreur lors de l'enregistrement Cloud : " + e.message);
+            statusBox.className = "p-4 rounded-3 bg-red-950/40 border border-red-500/30 text-red-300";
+            statusBox.innerHTML = `Erreur réseau : ${e.message}`;
         }
     }
 </script>

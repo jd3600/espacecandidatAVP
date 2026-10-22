@@ -127,20 +127,6 @@
         }
         .ai-card h5 { color: var(--ink) !important; font-size: 15px; letter-spacing: 0; }
         .ai-card p { line-height: 1.6; }
-        .document-preview { display: grid; grid-template-columns: 132px minmax(0, 1fr); align-items: start; gap: 16px; }
-        .document-preview-page { position: relative; min-height: 188px; overflow: hidden; padding: 12px 10px 20px; border: 1px solid #d6e0db; border-top: 4px solid var(--sea); background: linear-gradient(180deg, #fff 0%, #fbfdfb 100%); box-shadow: 0 5px 14px rgba(24, 53, 58, .1); }
-        .document-preview-page.letter { border-top-color: var(--coral); }
-        .document-preview-brand { display: flex; align-items: center; justify-content: space-between; color: var(--sea); font-size: 7px; font-weight: 700; }
-        .document-preview-page.letter .document-preview-brand { color: var(--coral); }
-        .document-preview-page h6 { margin: 13px 0 8px; color: var(--ink); font-size: 9px; font-weight: 700; }
-        .document-preview-page p { display: -webkit-box; overflow: hidden; margin: 0; color: #506461; font-size: 7px; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 6; }
-        .document-preview-rule { height: 3px; margin-top: 7px; border-radius: 2px; background: #e7eeea; }
-        .document-preview-rule.short { width: 68%; }
-        .document-preview-stamp { position: absolute; right: 8px; bottom: 7px; color: #82948e; font-size: 6px; font-weight: 700; letter-spacing: .06em; }
-        .document-preview-info { display: grid; justify-items: start; gap: 12px; }
-        .document-preview-info details { width: 100%; color: var(--muted); font-size: 12px; }
-        .document-preview-info summary { color: var(--sea); font-weight: 700; cursor: pointer; }
-        .document-preview-content { max-height: 220px; overflow: auto; margin-top: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 5px; background: #f8faf8; color: var(--ink); font-size: 12px; line-height: 1.6; white-space: pre-wrap; }
         .ai-card-clickable:hover, .avp-card:hover { border-color: #87b8a6 !important; background: #fff !important; box-shadow: 0 16px 34px rgba(22,58,55,.12); transform: translateY(-2px); }
         .border-cyan-500\/40, .border-cyan-500\/30, .border-cyan-500\/60 { border-color: var(--line) !important; }
         .border-emerald-500\/40 { border-color: var(--line) !important; }
@@ -233,7 +219,6 @@
             .matching-source-heading, .matching-source-footer { align-items: flex-start; flex-direction: column; }
             .matching-source-options { grid-template-columns: 1fr; }
             .matching-source-footer .btn { width: 100%; }
-            .document-preview { grid-template-columns: 112px minmax(0, 1fr); gap: 12px; }
             .modal-dialog { margin: 12px; }
         }
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
@@ -749,29 +734,21 @@
         })[character]);
     }
 
-    function construireApercuDocument(contenu, type) {
+    function construireCarteDocument(contenu, type) {
         const estCv = type === 'cv';
-        const titre = estCv ? 'CURRICULUM VITAE' : 'LETTRE DE MOTIVATION';
-        const icone = estCv ? 'fa-id-card' : 'fa-envelope-open-text';
+        const titre = estCv ? 'CV généré' : 'Lettre de motivation générée';
+        const icone = estCv ? 'fa-file-pdf text-danger' : 'fa-envelope-open-text text-primary';
         const texte = String(contenu || 'Aucun contenu généré.');
-        const extrait = escapeHtml(texte.replace(/\s+/g, ' ').trim());
 
         return `
-            <div class="document-preview">
-                <div class="document-preview-page ${estCv ? 'cv' : 'letter'}" role="img" aria-label="Aperçu du document : ${titre.toLowerCase()}">
-                    <div class="document-preview-brand"><span>OPT-NC</span><i class="fa-solid ${icone}" aria-hidden="true"></i></div>
-                    <h6>${titre}</h6>
-                    <p>${extrait}</p>
-                    <div class="document-preview-rule"></div>
-                    <div class="document-preview-rule"></div>
-                    <div class="document-preview-rule short"></div>
-                    <span class="document-preview-stamp">APERÇU DU DOCUMENT</span>
-                </div>
-                <div class="document-preview-info">
-                    <span class="badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">Aperçu prêt</span>
-                    <details>
-                        <summary>Lire le texte complet</summary>
-                        <div class="document-preview-content">${escapeHtml(texte)}</div>
+            <div class="d-flex align-items-start gap-3 p-3 border rounded bg-light">
+                <i class="fa-solid ${icone} fs-2 mt-1" aria-hidden="true"></i>
+                <div class="flex-grow-1">
+                    <div class="fw-semibold">${titre}</div>
+                    <div class="text-muted small">Document de candidature prêt à consulter.</div>
+                    <details class="mt-2">
+                        <summary class="small text-primary">Lire le contenu généré</summary>
+                        <div class="small text-dark mt-2">${escapeHtml(texte).replace(/\r?\n/g, '<br>')}</div>
                     </details>
                 </div>
             </div>`;
@@ -1213,9 +1190,9 @@
             const data = await res.json();
             const assets = data.resultat;
 
-            // Aperçus des documents générés
-            document.getElementById('asset-cv').innerHTML = construireApercuDocument(assets.cv_oriente || "CV structuré généré avec succès.", 'cv');
-            document.getElementById('asset-lettre').innerHTML = construireApercuDocument(assets.lettre_motivation || "Lettre de motivation générée.", 'lettre');
+            // Icônes et contenus des documents générés
+            document.getElementById('asset-cv').innerHTML = construireCarteDocument(assets.cv_oriente || "CV structuré généré avec succès.", 'cv');
+            document.getElementById('asset-lettre').innerHTML = construireCarteDocument(assets.lettre_motivation || "Lettre de motivation générée.", 'lettre');
 
             // Virer les badges au vert
             document.getElementById('badge-status-cv').className = "badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1 fs-7";

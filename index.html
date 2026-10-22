@@ -515,6 +515,9 @@
                     <button class="btn btn-success bg-emerald-600 border-0 w-100 py-3 fw-bold fs-6 shadow" onclick="soumettreToutAuCloud()">
                         <i class="fa-solid fa-paper-plane me-2"></i>Envoyer le Dossier Candidat
                     </button>
+                    <button id="btn-download-dossier" class="btn btn-outline-secondary w-100 mt-2" onclick="telechargerDossierPdf()" disabled>
+                        <i class="fa-solid fa-download me-2" aria-hidden="true"></i>Télécharger le dossier PDF
+                    </button>
                 </div>
 
                 <div id="final-status-box" class="d-none p-4 rounded-3 bg-emerald-950/40 border border-emerald-500/30 text-emerald-300"></div>
@@ -759,6 +762,8 @@
     let sourceMatchingActuelle = "avps";
     let assetsGeneresGlobal = null;
     let pdfPreviewUrl = null;
+    let choixUtilisateurGlobal = null;
+    let donneesCandidatGlobal = null;
 
     function escapeHtml(value = "") {
         return String(value).replace(/[&<>"']/g, character => ({
@@ -1280,6 +1285,9 @@
             const data = await res.json();
             const assets = data.resultat;
             assetsGeneresGlobal = assets;
+            choixUtilisateurGlobal = choixUtilisateur;
+            donneesCandidatGlobal = donneesCandidat;
+            document.getElementById('btn-download-dossier').disabled = false;
 
             // Aperçus des documents générés
             document.getElementById('asset-cv').innerHTML = construireApercuDocument(assets.cv_oriente || "CV structuré généré avec succès.", 'cv');
@@ -1303,6 +1311,57 @@
         } finally {
             btn.disabled = false;
             btn.innerHTML = `<i class="fa-solid fa-gears me-2"></i>Lancer la Génération des Assets & PDF`;
+        }
+    }
+
+    async function telechargerDossierPdf() {
+        const email = document.getElementById('candidat_email').value.trim();
+        const button = document.getElementById('btn-download-dossier');
+
+        if (!email) {
+            alert("Veuillez renseigner l'adresse e-mail du candidat.");
+            document.getElementById('candidat_email').focus();
+            return;
+        }
+        if (!assetsGeneresGlobal) {
+            alert("Générez d'abord les documents à l'étape 3.");
+            return;
+        }
+
+        button.disabled = true;
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2" aria-hidden="true"></i>Préparation du PDF…';
+
+        try {
+            const response = await fetch(`${API_BASE}/api/candidat/telecharger-pdf`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    profil_structurer: profilStructureGlobal || "Profil Standard",
+                    id_avp_cible: posteCibleActuel || "Poste Standard OPT-NC",
+                    choix_utilisateur: choixUtilisateurGlobal,
+                    donnees_candidat_raw: donneesCandidatGlobal
+                })
+            });
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.detail || `Erreur HTTP ${response.status}`);
+            }
+
+            const pdfBlob = await response.blob();
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = pdfUrl;
+            downloadLink.download = 'Dossier_Candidature_OPT-NC.pdf';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            downloadLink.remove();
+            window.setTimeout(() => URL.revokeObjectURL(pdfUrl), 1000);
+        } catch (error) {
+            alert(`Erreur lors de la génération du dossier PDF : ${error.message}`);
+        } finally {
+            button.disabled = false;
+            button.innerHTML = '<i class="fa-solid fa-download me-2" aria-hidden="true"></i>Télécharger le dossier PDF';
         }
     }
 
